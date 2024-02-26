@@ -10,8 +10,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>cn.studymachine</groupId>
-    <artifactId>amao-common</artifactId>
+    <artifactId>amao-commmon</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
