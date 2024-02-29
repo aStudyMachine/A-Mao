@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @AllArgsConstructor
 @Getter
-public enum ZxResultCode implements IResultCode {
+public enum ResultCode implements IResultCode {
 
 
     /**
