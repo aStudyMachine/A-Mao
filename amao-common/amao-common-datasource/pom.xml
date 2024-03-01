@@ -3,21 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>cn.studymachine</groupId>
-        <artifactId>A-Mao</artifactId>
+        <artifactId>amao-commmon</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>amao-commmon</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <modules>
-        <module>amao-common-core</module>
-        <module>amao-common-web</module>
-        <module>amao-common-datasource</module>
-    </modules>
+    <artifactId>amao-common-datasource</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
