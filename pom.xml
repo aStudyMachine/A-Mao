@@ -44,12 +44,27 @@
 
     <dependencyManagement>
        <dependencies>
-           <!--项目内部的jar-->
+
+           <!--region 项目内部模块-->
            <dependency>
                <groupId>cn.studymachine</groupId>
                <artifactId>amao-common-core</artifactId>
                <version>1.0-SNAPSHOT</version>
            </dependency>
+
+
+           <dependency>
+               <groupId>cn.studymachine</groupId>
+               <artifactId>amao-common-datasource</artifactId>
+               <version>1.0-SNAPSHOT</version>
+           </dependency>
+
+           <dependency>
+               <groupId>cn.studymachine</groupId>
+               <artifactId>amao-common-web</artifactId>
+               <version>1.0-SNAPSHOT</version>
+           </dependency>
+           <!--endregion-->
 
 
            <dependency>
