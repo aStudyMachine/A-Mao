@@ -1,4 +1,4 @@
-package cn.studymachine.common.enums;
+package cn.studymachine.common.core.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 

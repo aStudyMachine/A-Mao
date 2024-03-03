@@ -1,4 +1,4 @@
-package cn.studymachine.common.constant;
+package cn.studymachine.common.core.constant;
 
 /**
  * 项目级全局常量定义
@@ -6,7 +6,7 @@ package cn.studymachine.common.constant;
  * @author wukun
  * @since 2023/12/25
  */
-public class AppConst {
+public class GlobalConst {
 
 
     /**

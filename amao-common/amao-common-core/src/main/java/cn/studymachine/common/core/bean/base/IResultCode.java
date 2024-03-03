@@ -1,4 +1,4 @@
-package cn.studymachine.common.web;
+package cn.studymachine.common.core.bean.base;
 
 /**
  * @author wukun

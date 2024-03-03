@@ -10,7 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static cn.studymachine.common.constant.AppConst.TRACE_ID_HEADER;
+import static cn.studymachine.common.core.constant.GlobalConst.TRACE_ID_HEADER;
 
 
 /**
