@@ -36,6 +36,10 @@
 
         <!--mybatis-plus-->
         <mybatis-plus.veresion>3.5.4.1</mybatis-plus.veresion>
+
+        <dynamic-ds.version>4.2.0</dynamic-ds.version>
+
+        <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
     </properties>
 
     <modules>
@@ -92,6 +96,18 @@
                <groupId>com.baomidou</groupId>
                <artifactId>mybatis-plus-boot-starter</artifactId>
                <version>${mybatis-plus.veresion}</version>
+           </dependency>
+
+           <dependency>
+               <groupId>org.hibernate</groupId>
+               <artifactId>hibernate-validator</artifactId>
+               <version>${hibernate-validator.version}</version>
+           </dependency>
+
+           <dependency>
+               <groupId>com.baomidou</groupId>
+               <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+               <version>${dynamic-ds.version}</version>
            </dependency>
        </dependencies>
     </dependencyManagement>

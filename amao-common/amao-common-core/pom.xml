@@ -18,11 +18,15 @@
     </properties>
 
     <dependencies>
+        <!--<editor-fold desc="validation">-->
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
+        <!--</editor-fold>-->
 
+
+        <!--<editor-fold desc="Jackson">-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -32,6 +36,8 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
         </dependency>
+        <!--</editor-fold>-->
+
 
     </dependencies>
 
