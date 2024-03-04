@@ -37,9 +37,13 @@
         <!--mybatis-plus-->
         <mybatis-plus.veresion>3.5.4.1</mybatis-plus.veresion>
 
+        <!-- dynamic-datasource-->
         <dynamic-ds.version>4.2.0</dynamic-ds.version>
+        <!-- druid 数据库连接池-->
+        <druid-spring-boot-starter.version>1.2.21</druid-spring-boot-starter.version>
 
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
+
     </properties>
 
     <modules>

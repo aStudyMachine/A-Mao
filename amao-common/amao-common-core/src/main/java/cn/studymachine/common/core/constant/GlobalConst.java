@@ -17,5 +17,5 @@ public class GlobalConst {
     /**
      * 跨系统调用链追踪ID header 名称
      */
-    public static final String TRACE_ID_HEADER = "X-Trace-Id";
+    public static final String TRACE_ID_HTTP_HEADER = "X-Trace-Id";
 }

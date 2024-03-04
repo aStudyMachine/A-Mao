@@ -10,7 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static cn.studymachine.common.core.constant.GlobalConst.TRACE_ID_HEADER;
+import static cn.studymachine.common.core.constant.GlobalConst.TRACE_ID_HTTP_HEADER;
 
 
 /**
@@ -32,7 +32,7 @@ public class TraceLogWebInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        String traceId = request.getHeader(TRACE_ID_HEADER);
+        String traceId = request.getHeader(TRACE_ID_HTTP_HEADER);
         if (StrUtil.isBlank(traceId)) {
             //  上游请求 header 没设置trace id, 则拦截器进行生成, 用于本次请求系统内部对请求进行日志追踪
             traceId = IdUtil.simpleUUID();
@@ -48,7 +48,7 @@ public class TraceLogWebInterceptor implements HandlerInterceptor {
 
         // log.debug("------------ 请求参数:[{}]  ------------", requestBody);
 
-        response.setHeader(TRACE_ID_HEADER, traceId);
+        response.setHeader(TRACE_ID_HTTP_HEADER, traceId);
         return true;
     }
 
