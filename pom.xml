@@ -48,6 +48,7 @@
 
     <modules>
         <module>amao-common</module>
+        <module>amao-example</module>
     </modules>
 
     <dependencyManagement>
