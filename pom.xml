@@ -42,6 +42,9 @@
         <!-- druid 数据库连接池-->
         <druid-spring-boot-starter.version>1.2.21</druid-spring-boot-starter.version>
 
+        <redisson.version>3.24.3</redisson.version>
+        <lock4j.version>2.2.5</lock4j.version>
+
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
 
     </properties>
@@ -113,6 +116,19 @@
                <groupId>com.baomidou</groupId>
                <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
                <version>${dynamic-ds.version}</version>
+           </dependency>
+
+
+           <dependency>
+               <groupId>org.redisson</groupId>
+               <artifactId>redisson-spring-boot-starter</artifactId>
+               <version>${redisson.version}</version>
+           </dependency>
+
+           <dependency>
+               <groupId>com.baomidou</groupId>
+               <artifactId>lock4j-redisson-spring-boot-starter</artifactId>
+               <version>${lock4j.version}</version>
            </dependency>
        </dependencies>
     </dependencyManagement>
