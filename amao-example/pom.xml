@@ -27,6 +27,11 @@
             <groupId>cn.studymachine</groupId>
             <artifactId>amao-common-datasource</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>cn.studymachine</groupId>
+            <artifactId>amao-common-redis</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
