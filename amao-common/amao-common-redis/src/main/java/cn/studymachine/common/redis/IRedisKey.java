@@ -2,11 +2,17 @@ package cn.studymachine.common.redis;
 
 /**
  * The interface Redis key.
- * @param <T>  the type parameter
  * @author wukun
  * @since 2024 /3/6
  */
-public interface IRedisKey<T> {
+public interface IRedisKey {
+
+    /**
+     * key名, 相当于key的描述
+     *
+     * @return the name
+     */
+    String getName();
 
     /**
      * 获取格式化前的key, 包含{} 占位符
