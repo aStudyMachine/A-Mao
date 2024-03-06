@@ -1,8 +1,8 @@
 package cn.studymachine.common.web.config;
 
 import cn.hutool.core.exceptions.ExceptionUtil;
-import cn.studymachine.common.core.bean.base.Result;
-import cn.studymachine.common.core.bean.base.ResultCode;
+import cn.studymachine.common.core.bean.Result;
+import cn.studymachine.common.core.bean.ResultCode;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.http.HttpStatus;

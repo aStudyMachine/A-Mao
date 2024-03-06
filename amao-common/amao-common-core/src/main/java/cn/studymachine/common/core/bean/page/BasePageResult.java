@@ -1,4 +1,4 @@
-package cn.studymachine.common.core.bean.base.page;
+package cn.studymachine.common.core.bean.page;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
