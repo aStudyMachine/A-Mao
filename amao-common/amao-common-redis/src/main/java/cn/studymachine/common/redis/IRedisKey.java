@@ -13,7 +13,7 @@ public interface IRedisKey<T> {
      *
      * @return the complete key
      */
-    String getKeyFormat();
+    String getFormat();
 
     /**
      * 获取完整的key
@@ -24,22 +24,8 @@ public interface IRedisKey<T> {
 
     /**
      * 该key的过期时间, 单位:ms
-     *
      * @return the expire time
      */
     long getExpireTime();
 
-    /**
-     * Gets value.
-     *
-     * @return the value
-     */
-    T getValue();
-
-    /**
-     * Sets value.
-     *
-     * @param value the value
-     */
-    void setValue(T value);
 }
