@@ -19,14 +19,13 @@ public enum RedisKeyEnum implements IRedisKey {
 
 
     private final String name;
-    private final String format;
-    private final long expireTime;
+    private final String keyPattern;
+    private final long expiredTime;
 
 
     @Override
-    public String getCompleteKey(Object... args) {
-        return StrUtil.format(getFormat(), args);
+    public String getConcreteKey(Object... args) {
+        return StrUtil.format(getKeyPattern(), args);
     }
-
 
 }
