@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * 数据库实体类父类
@@ -32,12 +32,12 @@ public class BaseEntity implements Serializable {
     /**
      * The Create time.
      */
-    private LocalDateTime createTime;
+    private Date createTime;
 
     /**
      * The Update time.
      */
-    private LocalDateTime updateTime;
+    private Date updateTime;
 
     /**
      * The Create by.
