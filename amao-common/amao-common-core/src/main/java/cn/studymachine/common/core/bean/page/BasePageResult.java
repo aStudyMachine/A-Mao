@@ -26,12 +26,12 @@ public class BasePageResult<T> implements Serializable {
     /**
      * 当前页 (默认1, 页号从1开始)
      */
-    private Long current;
+    private Long current = 1L;
 
     /**
      * 页大小 (默认10)
      */
-    private Long size;
+    private Long size = 10L;
 
     /**
      * 总数

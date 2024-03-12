@@ -14,7 +14,7 @@ import lombok.Getter;
 @Getter
 public enum RedisKeyEnum implements IRedisKey {
 
-    TEST_KEY("test:{}", "测试redis key", -1L),
+    TEST_KEY("测试redis key", "test:{}", -1L),
     ;
 
 
