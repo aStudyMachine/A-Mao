@@ -1,10 +1,3 @@
-/*
- * Copyright (c) 2008-2999 广州市景心科技股份有限公司 All rights reserved.
- *
- * https://www.joysim.cn/
- *
- */
-
 package cn.studymachine.common.datasource.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
