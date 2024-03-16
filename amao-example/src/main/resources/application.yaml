@@ -28,7 +28,7 @@ spring:
         stat:
           enabled: true
           log-slow-sql: true # 慢 SQL 记录
-          slow-sql-millis: 100
+          slow-sql-millis: 1000
           merge-sql: true
         wall:
           config:

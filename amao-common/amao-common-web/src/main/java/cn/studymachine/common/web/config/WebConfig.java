@@ -26,6 +26,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // 配置链路追踪拦截器
         registry.addInterceptor(new TraceLogWebInterceptor()).addPathPatterns(GlobalConst.BASE_API_PREFIX + "/**");
     }
 
