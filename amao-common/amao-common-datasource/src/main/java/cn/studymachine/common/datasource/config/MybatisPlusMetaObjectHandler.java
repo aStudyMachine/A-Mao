@@ -1,6 +1,7 @@
 package cn.studymachine.common.datasource.config;
 
 import cn.hutool.core.util.StrUtil;
+import cn.studymachine.common.datasource.bean.BaseEntity;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
@@ -18,19 +19,29 @@ import java.util.Date;
 @Slf4j
 public class MybatisPlusMetaObjectHandler implements MetaObjectHandler {
 
+
     @Override
     public void insertFill(MetaObject metaObject) {
         log.debug("mybatis plus 新增操作 , 自动填充字段....");
         Date now = new Date();
-        fillValIfNullByName("createTime", now, metaObject, false);
-        fillValIfNullByName("updateTime", now, metaObject, false);
-        fillValIfNullByName("deleted", 0, metaObject, false);
+        fillValIfNullByName(BaseEntity.Fields.createTime, now, metaObject, false);
+        fillValIfNullByName(BaseEntity.Fields.updateTime, now, metaObject, false);
+
+        // todo @wukun 2024-03-17
+        // fillValIfNullByName(BaseEntity.Fields.createBy, now, metaObject, false);
+        // fillValIfNullByName(BaseEntity.Fields.updateBy, now, metaObject, false);
+
+        // fillValIfNullByName(BaseEntity.Fields.deleted, 0, metaObject, false);
+
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
         log.debug("mybatis plus 更新操作 , 自动填充字段....");
         fillValIfNullByName("updateTime", new Date(), metaObject, true);
+        // todo @wukun 2024-03-17
+        // fillValIfNullByName(BaseEntity.Fields.updateBy, now, metaObject, false);
+
     }
 
     /**
@@ -38,7 +49,7 @@ public class MybatisPlusMetaObjectHandler implements MetaObjectHandler {
      *
      * @param fieldName  属性名
      * @param fieldVal   属性值
-     * @param metaObject MetaObject
+     * @param metaObject 当前操作的数据对象
      * @param isCover    是否覆盖原有值,避免更新操作手动入参
      */
     private static void fillValIfNullByName(String fieldName, Object fieldVal, MetaObject metaObject, boolean isCover) {

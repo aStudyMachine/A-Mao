@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 2024/03/13
  */
 @Configuration
-@MapperScan({"cn.studymachine"})
+@MapperScan({"cn.studymachine.*.*.mapper"})
 public class MybatisPlusConfig {
 
     /**
