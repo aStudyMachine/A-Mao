@@ -1,4 +1,4 @@
-package cn.studymachine.common.core.util;
+package cn.studymachine.common.json.util;
 
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.ArrayUtil;

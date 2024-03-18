@@ -18,6 +18,7 @@
         <module>amao-common-web</module>
         <module>amao-common-datasource</module>
         <module>amao-common-redis</module>
+        <module>amao-common-json</module>
     </modules>
 
     <properties>
