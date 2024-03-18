@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
     /*---------------------------------------------- Methods ~ ----------------------------------------------*/
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    // @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result<Void> handleError(MissingServletRequestParameterException e, HttpServletRequest request) {
         log.error("缺少请求参数, msg:{}  请求uri:{}", e.getMessage(), request.getRequestURI());
         String message = String.format("缺少必要的请求参数: %s", e.getParameterName());
@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({MethodArgumentTypeMismatchException.class,})
-    // @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result<Void> handleError(MethodArgumentTypeMismatchException e, HttpServletRequest request) {
         log.error("请求参数格式错误, msg:{} , 请求uri:{}", e.getMessage(), request.getRequestURI());
         String message = String.format("请求参数格式错误: %s", e.getName());
@@ -53,14 +53,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    // @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result<Void> handleError(MethodArgumentNotValidException e, HttpServletRequest request) {
         log.error("参数验证失败, msg:{} 请求uri:{}", e.getMessage(), request.getRequestURI());
         return handleError(e.getBindingResult());
     }
 
     @ExceptionHandler(BindException.class)
-    // @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result<Void> handleError(BindException e, HttpServletRequest request) {
         log.error("参数绑定失败, msg:{} 请求uri:{}", e.getMessage(), request.getRequestURI());
         return handleError(e.getBindingResult());
@@ -73,7 +73,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    // @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result<Void> handleError(ConstraintViolationException e, HttpServletRequest request) {
         log.error("参数验证失败, msg:{} 请求uri:{}", e.getMessage(), request.getRequestURI());
         Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
@@ -99,7 +99,7 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(Exception.class)
-    // @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result<Void> handleError(Exception e) {
         log.error("未定义服务器异常:{}", e.getMessage(), ExceptionUtil.getRootCause(e));
         return Result.fail(ResultCode.INTERNAL_SERVER_ERROR);
