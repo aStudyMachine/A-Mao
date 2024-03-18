@@ -6,7 +6,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 
 /**
- * result.
+ * 请求 result 对象.
  *
  * @param <T> the type parameter
  * @author wukun
