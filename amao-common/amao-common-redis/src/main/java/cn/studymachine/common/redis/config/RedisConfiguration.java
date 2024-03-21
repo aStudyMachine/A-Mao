@@ -23,7 +23,8 @@ import org.springframework.context.annotation.Bean;
 /**
  * redis配置
  *
- * @author Lion Li
+ * @author wukun
+ * @since 2024/03/22
  */
 @Slf4j
 @AutoConfiguration
@@ -33,7 +34,6 @@ public class RedisConfiguration {
 
     @Autowired
     private RedissonProperties redissonProperties;
-
 
     @Autowired
     private ObjectMapper objectMapper;

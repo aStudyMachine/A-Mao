@@ -24,7 +24,8 @@ import java.util.concurrent.ConcurrentMap;
  * 修改 RedissonSpringCacheManager 源码
  * 重写 cacheName 处理方法 支持多参数
  *
- * @author Nikita Koksharov
+ * @author wukun
+ * @since 2024/03/22
  */
 @SuppressWarnings("unchecked")
 public class PlusSpringCacheManager implements CacheManager {

@@ -17,8 +17,8 @@ import java.util.stream.Stream;
 /**
  * redis 工具类
  *
- * @author Lion Li
- * @version 3.1.0 新增
+ * @author wukun
+ * @since 2024/03/22
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressWarnings(value = {"unchecked", "rawtypes"})
