@@ -2,13 +2,13 @@ package cn.studymachine.common.redis.config;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.studymachine.common.redis.config.properties.RedissonProperties;
+import cn.studymachine.common.redis.handler.KeyPrefixHandler;
+import cn.studymachine.common.redis.manager.PlusSpringCacheManager;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.common.redis.handler.KeyPrefixHandler;
-import org.dromara.common.redis.manager.PlusSpringCacheManager;
 import org.redisson.client.codec.StringCodec;
 import org.redisson.codec.CompositeCodec;
 import org.redisson.codec.TypedJsonJacksonCodec;
