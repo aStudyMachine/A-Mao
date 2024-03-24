@@ -43,7 +43,6 @@ public class JacksonConfig {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
             javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(formatter));
             javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(formatter));
-
             builder.modules(javaTimeModule);
             builder.timeZone(TimeZone.getDefault());
             log.info("初始化 jackson 配置");
