@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.client.codec.StringCodec;
 import org.redisson.codec.CompositeCodec;
@@ -30,13 +31,11 @@ import org.springframework.context.annotation.Bean;
 @AutoConfiguration
 @EnableCaching
 @EnableConfigurationProperties(RedissonProperties.class)
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class RedisConfiguration {
 
-    @Autowired
-    private RedissonProperties redissonProperties;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final RedissonProperties redissonProperties;
+    private final ObjectMapper objectMapper;
 
     @Bean
     public RedissonAutoConfigurationCustomizer redissonCustomizer() {
