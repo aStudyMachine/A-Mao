@@ -1,8 +1,7 @@
 package cn.studymachine.common.redis.util;
 
 import cn.hutool.extra.spring.SpringUtil;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import org.redisson.api.*;
 
 import java.time.Duration;
@@ -20,8 +19,7 @@ import java.util.stream.Stream;
  * @author wukun
  * @since 2024/03/22
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-@SuppressWarnings(value = {"unchecked", "rawtypes"})
+@UtilityClass
 public class RedisUtils {
 
     private static final RedissonClient CLIENT = SpringUtil.getBean(RedissonClient.class);
