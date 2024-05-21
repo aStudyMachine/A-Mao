@@ -3,8 +3,8 @@ package cn.studymachine.common.web.config;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.studymachine.common.core.bean.Result;
 import cn.studymachine.common.core.bean.ResultCode;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -17,11 +17,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import java.util.Set;
 
 /**
  * @author wukun
@@ -72,16 +67,16 @@ public class GlobalExceptionHandler {
         return Result.fail(ResultCode.PARAM_BIND_ERROR, message);
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Result<Void> handleError(ConstraintViolationException e, HttpServletRequest request) {
-        log.error("参数验证失败, msg:{} 请求uri:{}", e.getMessage(), request.getRequestURI());
-        Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
-        ConstraintViolation<?> violation = violations.iterator().next();
-        String path = ((PathImpl) violation.getPropertyPath()).getLeafNode().getName();
-        String message = String.format("%s:%s", path, violation.getMessage());
-        return Result.fail(ResultCode.PARAM_VALID_ERROR, message);
-    }
+    // @ExceptionHandler(ConstraintViolationException.class)
+    // @ResponseStatus(HttpStatus.BAD_REQUEST)
+    // public Result<Void> handleError(ConstraintViolationException e, HttpServletRequest request) {
+    //     log.error("参数验证失败, msg:{} 请求uri:{}", e.getMessage(), request.getRequestURI());
+    //     Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+    //     ConstraintViolation<?> violation = violations.iterator().next();
+    //     String path = ((pathimpl) violation.getPropertyPath()).getLeafNode().getName();
+    //     String message = String.format("%s:%s", path, violation.getMessage());
+    //     return Result.fail(ResultCode.PARAM_VALID_ERROR, message);
+    // }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
