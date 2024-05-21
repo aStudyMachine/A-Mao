@@ -1,7 +1,5 @@
 package cn.studymachine.common.core.enums;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 /**
  * <pre>
  * POJO对象枚举类通用接口 (原则上所有POJO对象中出现的枚举字段, 枚举类都要实现该接口)
@@ -21,7 +19,6 @@ public interface IPOJOEnum {
      *
      * @return the value
      */
-    @JsonValue
     Integer getValue();
 
     /**
