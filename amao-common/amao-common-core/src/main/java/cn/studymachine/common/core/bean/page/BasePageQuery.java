@@ -1,9 +1,9 @@
 package cn.studymachine.common.core.bean.page;
 
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.Min;
 import java.io.Serializable;
 
 /**
