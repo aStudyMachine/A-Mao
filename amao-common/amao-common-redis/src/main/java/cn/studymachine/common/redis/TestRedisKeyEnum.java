@@ -1,7 +1,10 @@
 package cn.studymachine.common.redis;
 
+import cn.studymachine.common.redis.util.RedisUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.time.Duration;
 
 /**
  * TestRedisKeyEnum
@@ -22,4 +25,9 @@ public enum TestRedisKeyEnum implements IRedisKey {
     private final long expiredTime;
 
 
+    public static void main(String[] args) {
+        String concreteKey = TestRedisKeyEnum.TEST_KEY.getConcreteKey(1);
+        RedisUtils.setCacheObject(concreteKey, "test");
+        RedisUtils.setCacheObject(concreteKey, "test", Duration.ofMinutes(1));
+    }
 }

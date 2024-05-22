@@ -1,7 +1,8 @@
 package cn.studymachine.common.redis;
 
 /**
- * The interface Redis key.
+ * 所有 redis key 的定义, 都需要实现的枚举接口
+ * 具体的使用方式, 可以参考 {@link TestRedisKeyEnum}
  *
  * @author wukun
  * @since 2024 /3/6
