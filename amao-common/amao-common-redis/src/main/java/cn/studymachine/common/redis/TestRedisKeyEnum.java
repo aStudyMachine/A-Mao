@@ -1,18 +1,17 @@
 package cn.studymachine.common.redis;
 
-import cn.hutool.core.util.StrUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * RedisKeyEnum
+ * TestRedisKeyEnum
  *
  * @author wukun
  * @since 2024/3/10
  */
 @AllArgsConstructor
 @Getter
-public enum RedisKeyEnum implements IRedisKey {
+public enum TestRedisKeyEnum implements IRedisKey {
 
     TEST_KEY("测试redis key", "test:{}", -1L),
     ;
@@ -22,10 +21,5 @@ public enum RedisKeyEnum implements IRedisKey {
     private final String keyPattern;
     private final long expiredTime;
 
-
-    @Override
-    public String getConcreteKey(Object... args) {
-        return StrUtil.format(getKeyPattern(), args);
-    }
 
 }

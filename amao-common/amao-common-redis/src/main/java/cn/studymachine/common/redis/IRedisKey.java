@@ -28,7 +28,9 @@ public interface IRedisKey {
      * @param args the args
      * @return the complete key
      */
-    String getConcreteKey(Object... args);
+    default String getConcreteKey(Object... args) {
+        return String.format(getKeyPattern(), args);
+    }
 
     /**
      * 该key的过期时间, 单位:ms , -1:表示永不过期
