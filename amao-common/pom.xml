@@ -20,6 +20,7 @@
         <module>amao-common-redis</module>
         <module>amao-common-json</module>
         <module>amao-common-satoken</module>
+        <module>amao-common-tracelog</module>
     </modules>
 
     <properties>

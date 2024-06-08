@@ -1,7 +1,7 @@
 package cn.studymachine.common.web.config;
 
 import cn.studymachine.common.core.constant.GlobalConst;
-import cn.studymachine.common.web.Interceptor.TraceLogWebInterceptor;
+import cn.studymachine.common.tracelog.interceptor.TraceLogWebInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;

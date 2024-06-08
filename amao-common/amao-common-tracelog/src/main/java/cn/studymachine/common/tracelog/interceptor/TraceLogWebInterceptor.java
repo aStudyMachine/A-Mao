@@ -1,4 +1,4 @@
-package cn.studymachine.common.web.Interceptor;
+package cn.studymachine.common.tracelog.interceptor;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
