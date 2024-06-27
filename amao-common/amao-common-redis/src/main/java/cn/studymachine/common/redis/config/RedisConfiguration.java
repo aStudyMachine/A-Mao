@@ -73,6 +73,7 @@ public class RedisConfiguration {
             if (ObjectUtil.isNotNull(clusterServersConfig)) {
                 config.useClusterServers()
                         //设置redis key前缀
+
                         .setNameMapper(new KeyPrefixHandler(redissonProperties.getKeyPrefix()))
                         .setTimeout(clusterServersConfig.getTimeout())
                         .setClientName(clusterServersConfig.getClientName())
@@ -97,7 +98,7 @@ public class RedisConfiguration {
         return new PlusSpringCacheManager();
     }
 
-    /**
+    /*
      * redis集群配置 yml
      *
      * --- # redis 集群配置(单机与集群只能开启一个另一个需要注释掉)
