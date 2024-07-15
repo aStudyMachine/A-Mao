@@ -5,11 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.studymachine</groupId>
-        <artifactId>amao-common</artifactId>
+        <artifactId>amao-modules</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>amao-common-satoken</artifactId>
+    <artifactId>amao-module-user</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -17,13 +18,4 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-
-    <dependencies>
-        <dependency>
-            <groupId>cn.studymachine</groupId>
-            <artifactId>amao-common-redis</artifactId>
-        </dependency>
-
-
-    </dependencies>
 </project>

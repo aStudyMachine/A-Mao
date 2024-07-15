@@ -56,6 +56,7 @@
     <modules>
         <module>amao-common</module>
         <module>amao-boot</module>
+        <module>amao-modules</module>
     </modules>
 
     <dependencyManagement>
