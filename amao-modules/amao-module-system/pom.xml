@@ -10,7 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>amao-module-user</artifactId>
+    <artifactId>amao-module-system</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

@@ -19,6 +19,6 @@
     </properties>
 
     <modules>
-        <module>amao-module-user</module>
+        <module>amao-module-system</module>
     </modules>
 </project>
