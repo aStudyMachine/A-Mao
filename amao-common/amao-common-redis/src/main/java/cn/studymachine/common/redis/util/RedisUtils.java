@@ -25,12 +25,12 @@ public class RedisUtils {
     private static final RedissonClient CLIENT = SpringUtil.getBean(RedissonClient.class);
 
     /**
-     * 限流
+     * 限流工具方法
      *
      * @param key          限流key
      * @param rateType     限流类型
-     * @param rate         速率
-     * @param rateInterval 速率间隔
+     * @param rate         限流时间窗口  {@param rateInterval}
+     * @param rateInterval 限流时间窗口 , 单位:秒
      * @return -1 表示失败
      */
     public static long rateLimiter(String key, RateType rateType, int rate, int rateInterval) {
@@ -56,7 +56,6 @@ public class RedisUtils {
      * @param channelKey 通道key
      * @param msg        发送数据
      * @param consumer   自定义处理
-     *
      */
     public static <T> void publish(String channelKey, T msg, Consumer<T> consumer) {
         RTopic topic = CLIENT.getTopic(channelKey);
@@ -87,7 +86,7 @@ public class RedisUtils {
      * @param key   缓存的键值
      * @param value 缓存的值
      */
-    public static <T> void setCacheObject(final String key, final T value) {
+    public static <T> void setCacheObject(String key, T value) {
         setCacheObject(key, value, false);
     }
 
@@ -99,7 +98,7 @@ public class RedisUtils {
      * @param isSaveTtl 是否保留TTL有效期(例如: set之前ttl剩余90 set之后还是为90)
      * @since Redis 6.X 以上使用 setAndKeepTTL 兼容 5.X 方案
      */
-    public static <T> void setCacheObject(final String key, final T value, final boolean isSaveTtl) {
+    public static <T> void setCacheObject(String key, T value, boolean isSaveTtl) {
         RBucket<T> bucket = CLIENT.getBucket(key);
         if (isSaveTtl) {
             try {
@@ -120,7 +119,7 @@ public class RedisUtils {
      * @param value    缓存的值
      * @param duration 时间
      */
-    public static <T> void setCacheObject(final String key, final T value, final Duration duration) {
+    public static <T> void setCacheObject(String key, T value, Duration duration) {
         RBatch batch = CLIENT.createBatch();
         RBucketAsync<T> bucket = batch.getBucket(key);
         bucket.setAsync(value);
