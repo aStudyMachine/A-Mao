@@ -34,11 +34,16 @@ public class RedisUtils {
      * @return -1 表示失败
      */
     public static long rateLimiter(String key, RateType rateType, int rate, int rateInterval) {
+        // 获取限流器实例
         RRateLimiter rateLimiter = CLIENT.getRateLimiter(key);
+        // 设置限流器的限流速率
         rateLimiter.trySetRate(rateType, rate, rateInterval, RateIntervalUnit.SECONDS);
+        // 尝试获取一个许可
         if (rateLimiter.tryAcquire()) {
+            // 获取成功，返回当前可用的许可数
             return rateLimiter.availablePermits();
         } else {
+            // 获取失败，返回-1
             return -1L;
         }
     }
@@ -48,19 +53,6 @@ public class RedisUtils {
      */
     public static RedissonClient getClient() {
         return CLIENT;
-    }
-
-    /**
-     * 发布通道消息
-     *
-     * @param channelKey 通道key
-     * @param msg        发送数据
-     * @param consumer   自定义处理
-     */
-    public static <T> void publish(String channelKey, T msg, Consumer<T> consumer) {
-        RTopic topic = CLIENT.getTopic(channelKey);
-        topic.publish(msg);
-        consumer.accept(msg);
     }
 
     public static <T> void publish(String channelKey, T msg) {
