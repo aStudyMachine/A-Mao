@@ -1,4 +1,4 @@
-package cn.studymachine.common.core.bean;
+package cn.studymachine.common.web;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

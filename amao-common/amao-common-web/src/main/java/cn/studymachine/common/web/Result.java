@@ -1,4 +1,4 @@
-package cn.studymachine.common.core.bean;
+package cn.studymachine.common.web;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -16,9 +16,6 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class Result<T> implements Serializable {
 
-    /**
-     * The constant serialVersionUID.
-     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -47,10 +44,6 @@ public class Result<T> implements Serializable {
 
     // -------------------
 
-    public static <T> Result<T> fail() {
-        return build(null, ResultCode.FAILURE.getCode(), ResultCode.FAILURE.getMessage());
-    }
-
     public static <T> Result<T> fail(String msg) {
         return build(null, ResultCode.FAILURE.getCode(), msg);
     }
@@ -63,9 +56,6 @@ public class Result<T> implements Serializable {
         return build(null, code.getCode(), msg);
     }
 
-    public static <T> Result<T> fail(int code, String msg) {
-        return build(null, code, msg);
-    }
 
 
     // -------------------

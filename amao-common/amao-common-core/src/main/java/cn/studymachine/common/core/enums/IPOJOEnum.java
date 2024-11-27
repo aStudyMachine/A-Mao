@@ -19,36 +19,36 @@ public interface IPOJOEnum {
      *
      * @return the value
      */
-    Integer getValue();
+    Integer getCode();
 
     /**
-     * 枚举描述
+     * 枚举名
      *
      * @return the desc
      */
-    String getDesc();
+    String getName();
 
 
     /**
-     * Value to enum  通用方法
+     * code to enum  通用方法
      *
      * @param <T>       the type parameter
      * @param enumClazz the enum clazz
-     * @param value     the value
+     * @param code      the code
      * @return the t
      */
-    static <T extends IPOJOEnum> T valueToEnum(Class<T> enumClazz, Integer value) {
-        if (value == null) {
+    static <T extends IPOJOEnum> T codeToEnum(Class<T> enumClazz, Integer code) {
+        if (code == null) {
             return null;
         }
 
         for (T element : enumClazz.getEnumConstants()) {
-            if (element.getValue().equals(value)) {
+            if (element.getCode().equals(code)) {
                 return element;
             }
         }
 
-        throw new IllegalArgumentException(String.format("Can not convert value [%s] to [%s].", value,
+        throw new IllegalArgumentException(String.format("转换枚举值:[%s] 为 [%s] 枚举异常.", code,
                 enumClazz.getName()));
     }
 }
