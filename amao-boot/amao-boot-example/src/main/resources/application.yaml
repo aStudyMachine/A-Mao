@@ -1,5 +1,5 @@
 server:
-  port: 8088
+  port: 9001
 
 spring:
   application:
@@ -12,17 +12,16 @@ spring:
       primary: master
       datasource:
         master: # 数据源名称定义
-          name: amao #数据库名称
-          url: jdbc:mysql://127.0.0.1:3306/${spring.datasource.dynamic.datasource.master.name}?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          name: a-mao #数据库名称
+          url: jdbc:mysql://127.0.0.1:13306/${spring.datasource.dynamic.datasource.master.name}?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
           driver-class-name: com.mysql.cj.jdbc.Driver
           username: root
           password: 123456
   data:
     redis:
       host: 127.0.0.1
-      port: 6389
-      password: 123456
-      database: 1
+      port: 6379
+      database: 0
       timeout: 10s
       ssl:
         enabled: false
