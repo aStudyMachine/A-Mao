@@ -6,4 +6,18 @@ package cn.studymachine.common.tracelog.annotation;
  */
 public @interface TraceLog {
 
+    /**
+     * 方法执行完成后是否清除MDC中的traceId
+     */
+    boolean clearTraceId() default true;
+
+    /**
+     * 是否打印出参
+     */
+    boolean printOutParam() default true;
+
+    /**
+     * 是否打印入参
+     */
+    boolean printInParam() default true;
 }
