@@ -1,9 +1,9 @@
 server:
-  port: 8989
+  port: 9100
 
 spring:
   application:
-    name: amao-example
+    name: system-service
   mvc:
     format:
       date-time: yyyy-MM-dd HH:mm:ss

@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Min;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -20,6 +21,7 @@ public class BasePageQuery<T> implements Serializable {
     /**
      * The constant serialVersionUID.
      */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

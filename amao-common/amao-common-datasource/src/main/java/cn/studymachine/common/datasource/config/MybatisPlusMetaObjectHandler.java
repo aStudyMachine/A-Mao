@@ -1,10 +1,11 @@
 package cn.studymachine.common.datasource.config;
 
 import cn.hutool.core.util.StrUtil;
-import cn.studymachine.common.datasource.bean.BaseEntity;
+import cn.studymachine.common.datasource.bean.BaseModel;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
+import org.slf4j.MDC;
 import org.springframework.util.ClassUtils;
 
 import java.nio.charset.Charset;
@@ -24,14 +25,20 @@ public class MybatisPlusMetaObjectHandler implements MetaObjectHandler {
     public void insertFill(MetaObject metaObject) {
         log.debug("mybatis plus 新增操作 , 自动填充字段....");
         Date now = new Date();
-        fillValIfNullByName(BaseEntity.Fields.createTime, now, metaObject, false);
-        fillValIfNullByName(BaseEntity.Fields.updateTime, now, metaObject, false);
+        fillValIfNullByName(BaseModel.Fields.createTime, now, metaObject, false);
+        fillValIfNullByName(BaseModel.Fields.updateTime, now, metaObject, false);
 
         // todo @wukun 2024-03-17
-        // fillValIfNullByName(BaseEntity.Fields.createBy, now, metaObject, false);
-        // fillValIfNullByName(BaseEntity.Fields.updateBy, now, metaObject, false);
+        // fillValIfNullByName(BaseModel.Fields.createBy, now, metaObject, false);
+        // fillValIfNullByName(BaseModel.Fields.updateBy, now, metaObject, false);
 
-        // fillValIfNullByName(BaseEntity.Fields.deleted, 0, metaObject, false);
+        // fillValIfNullByName(BaseModel.Fields.deleted, 0, metaObject, false);
+
+        // traceId
+        String traceId = MDC.get("traceId");
+        if (StrUtil.isNotBlank(traceId)) {
+            fillValIfNullByName(BaseModel.Fields.traceId, traceId, metaObject, false);
+        }
 
     }
 
@@ -40,12 +47,12 @@ public class MybatisPlusMetaObjectHandler implements MetaObjectHandler {
         log.debug("mybatis plus 更新操作 , 自动填充字段....");
         fillValIfNullByName("updateTime", new Date(), metaObject, true);
         // todo @wukun 2024-03-17
-        // fillValIfNullByName(BaseEntity.Fields.updateBy, now, metaObject, false);
+        // fillValIfNullByName(BaseModel.Fields.updateBy, now, metaObject, false);
 
     }
 
     /**
-     * 填充值，先判断是否有手动设置，优先手动设置的值，例如：job必须手动设置
+     * 填充值，先判断是否有手动设置，优先手动设置的值，
      *
      * @param fieldName  属性名
      * @param fieldVal   属性值

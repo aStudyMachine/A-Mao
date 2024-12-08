@@ -1,17 +1,24 @@
+# 公共字段
+
 # 系统用户表
 ################################################ t_sys_user ################################################
 CREATE TABLE t_sys_user
 (
-    `id`          bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
-    `username`    varchar(50)         NOT NULL COMMENT '用户名',
-    `password`    varchar(50)         NOT NULL COMMENT '密码',
-    `real_name`   varchar(50)         NOT NULL COMMENT '真实姓名',
-    `phone`       varchar(20)         NOT NULL COMMENT '手机号',
-    `email`       varchar(50)         NOT NULL COMMENT '邮箱',
-    `status`      tinyint(1)          NOT NULL DEFAULT 1 COMMENT '状态 1:正常 0:禁用',
-    `create_time` datetime            NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` datetime            NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    `deleted`     tinyint(1)          NOT NULL DEFAULT 0 COMMENT '删除状态 1:已删除 0:未删除',
+    `id`           bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `username`     varchar(50)         NOT NULL COMMENT '用户名',
+    `password`     varchar(50)         NOT NULL COMMENT '密码',
+    `real_name`    varchar(50)         NOT NULL COMMENT '真实姓名',
+    `phone`        varchar(20)         NOT NULL COMMENT '手机号',
+    `email`        varchar(50)         NOT NULL COMMENT '邮箱',
+    `status`       tinyint(1)          NOT NULL DEFAULT 1 COMMENT '状态 1:正常 0:禁用',
+    `deleted`      tinyint(1)          NOT NULL DEFAULT 0 COMMENT '删除状态 1:已删除 0:未删除',
+    `create_time`  DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`  DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `create_by`    BIGINT              NOT NULL COMMENT '创建人id',
+    `creator_name` VARCHAR(255)        NOT NULL COMMENT '创建人名称',
+    `update_by`    BIGINT              NOT NULL COMMENT '更新人id',
+    `updater_name` VARCHAR(255)        NOT NULL COMMENT '更新人名称',
+    `trace_id`     VARCHAR(255)        NOT NULL COMMENT '最近一次操作的traceId , 用于链路追踪',
     PRIMARY KEY (id),
     UNIQUE KEY `username` (`username`),
     UNIQUE KEY `phone` (`phone`),
@@ -25,12 +32,17 @@ CREATE TABLE t_sys_user
 ################################################ t_sys_dict ################################################
 CREATE TABLE t_sys_dict_key
 (
-    `id`          bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
-    `dict_key`    varchar(50)         NOT NULL COMMENT '字典key 唯一',
-    `dict_name`   varchar(50)         NOT NULL COMMENT '字典名称',
-    `status`      tinyint(1)          NOT NULL DEFAULT 1 COMMENT '状态 1:正常 0:禁用',
-    `create_time` datetime            NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` datetime            NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `id`         bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `dict_key`   varchar(50)         NOT NULL COMMENT '字典key 唯一',
+    `dict_name`  varchar(50)         NOT NULL COMMENT '字典名称',
+    `status`     tinyint(1)          NOT NULL DEFAULT 1 COMMENT '状态 1:正常 0:禁用',
+    create_time  DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time  DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by    BIGINT              NOT NULL COMMENT '创建人id',
+    creator_name VARCHAR(255)        NOT NULL COMMENT '创建人名称',
+    update_by    BIGINT              NOT NULL COMMENT '更新人id',
+    updater_name VARCHAR(255)        NOT NULL COMMENT '更新人名称',
+    trace_id     VARCHAR(255)        NOT NULL COMMENT '最近一次操作的traceId , 用于链路追踪',
     PRIMARY KEY (id),
     UNIQUE KEY `dict_key` (`dict_key`)
 ) ENGINE = InnoDB
@@ -42,13 +54,18 @@ CREATE TABLE t_sys_dict_key
 ################################################ t_sys_dict_value ################################################
 CREATE TABLE t_sys_dict_value
 (
-    `id`          bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
-    `dict_key`    varchar(50)         NOT NULL COMMENT '关联的字典key',
-    `value`       varchar(50)         NOT NULL COMMENT '字典value 字典key关联 value 唯一',
-    `name`        varchar(50)         NOT NULL COMMENT '字典值名称',
-    `status`      tinyint(1)          NOT NULL DEFAULT 1 COMMENT '状态 1:正常 0:禁用',
-    `create_time` datetime            NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` datetime            NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `id`         bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `dict_key`   varchar(50)         NOT NULL COMMENT '关联的字典key',
+    `value`      varchar(50)         NOT NULL COMMENT '字典value 字典key关联 value 唯一',
+    `name`       varchar(50)         NOT NULL COMMENT '字典值名称',
+    `status`     tinyint(1)          NOT NULL DEFAULT 1 COMMENT '状态 1:正常 0:禁用',
+    create_time  DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time  DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by    BIGINT              NOT NULL COMMENT '创建人id',
+    creator_name VARCHAR(255)        NOT NULL COMMENT '创建人名称',
+    update_by    BIGINT              NOT NULL COMMENT '更新人id',
+    updater_name VARCHAR(255)        NOT NULL COMMENT '更新人名称',
+    trace_id     VARCHAR(255)        NOT NULL COMMENT '最近一次操作的traceId , 用于链路追踪',
     PRIMARY KEY (id),
     UNIQUE KEY `dict_key_value` (`dict_key`, `value`)
 ) ENGINE = InnoDB

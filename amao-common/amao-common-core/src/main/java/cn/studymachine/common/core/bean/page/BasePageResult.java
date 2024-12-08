@@ -3,6 +3,7 @@ package cn.studymachine.common.core.bean.page;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +22,7 @@ public class BasePageResult<T> implements Serializable {
     /**
      * The constant serialVersionUID.
      */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

@@ -5,22 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.studymachine</groupId>
-        <artifactId>amao-modules</artifactId>
+        <artifactId>amao-module-system</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>amao-module-system</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>amao-module-system-api</module>
-        <module>amao-module-system-service</module>
-    </modules>
+    <artifactId>amao-module-system-api</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
 
 </project>
