@@ -5,12 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.studymachine</groupId>
-        <artifactId>A-Mao</artifactId>
+        <artifactId>amao-modules</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>amao-modules</artifactId>
+    <artifactId>amao-module-user</artifactId>
     <packaging>pom</packaging>
+    <modules>
+        <module>amao-module-user-api</module>
+        <module>amao-module-user-service</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -18,8 +22,4 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <modules>
-        <module>amao-module-system</module>
-        <module>amao-module-user</module>
-    </modules>
 </project>
