@@ -83,5 +83,4 @@ public class BaseModel implements Serializable {
     //  */
     // private Integer deleted;
 
-
 }

@@ -1,4 +1,11 @@
 # 公共字段
+# `create_time`  DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+#     `update_time`  DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+#     `create_by`    BIGINT              NOT NULL COMMENT '创建人id',
+#     `creator_name` VARCHAR(255)        NOT NULL COMMENT '创建人名称',
+#     `update_by`    BIGINT              NOT NULL COMMENT '更新人id',
+#     `updater_name` VARCHAR(255)        NOT NULL COMMENT '更新人名称',
+#     `trace_id`     VARCHAR(255)        NOT NULL COMMENT '最近一次操作的traceId , 用于链路追踪',
 
 # 系统用户表
 ################################################ t_sys_user ################################################
