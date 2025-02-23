@@ -5,9 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import lombok.experimental.SuperBuilder;
 
 /**
  * 字典key表
@@ -15,8 +13,6 @@ import lombok.experimental.SuperBuilder;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-@SuperBuilder
-@NoArgsConstructor
 @TableName(value = "t_sys_dict_key")
 public class SysDictKeyModel extends BaseModel {
     /**

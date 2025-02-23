@@ -65,6 +65,7 @@ public class BaseModel implements Serializable {
 
     /**
      * 更新人名称
+     *
      */
     @TableField(value = "updater_name", fill = FieldFill.INSERT_UPDATE)
     private String updaterName;
