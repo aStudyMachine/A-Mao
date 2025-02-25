@@ -67,17 +67,6 @@ public class GlobalExceptionHandler {
         return Result.fail(ResultCode.PARAM_BIND_ERROR, message);
     }
 
-    // @ExceptionHandler(ConstraintViolationException.class)
-    // @ResponseStatus(HttpStatus.BAD_REQUEST)
-    // public Result<Void> handleError(ConstraintViolationException e, HttpServletRequest request) {
-    //     log.error("参数验证失败, msg:{} 请求uri:{}", e.getMessage(), request.getRequestURI());
-    //     Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
-    //     ConstraintViolation<?> violation = violations.iterator().next();
-    //     String path = ((pathimpl) violation.getPropertyPath()).getLeafNode().getName();
-    //     String message = String.format("%s:%s", path, violation.getMessage());
-    //     return Result.fail(ResultCode.PARAM_VALID_ERROR, message);
-    // }
-
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Result<Void> handleError(NoHandlerFoundException e, HttpServletRequest request) {
