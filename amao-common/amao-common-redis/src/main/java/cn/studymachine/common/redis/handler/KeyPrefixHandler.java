@@ -1,7 +1,7 @@
 package cn.studymachine.common.redis.handler;
 
 import cn.hutool.core.util.StrUtil;
-import org.redisson.api.NameMapper;
+import org.redisson.config.NameMapper;
 
 /**
  * redis缓存key前缀处理

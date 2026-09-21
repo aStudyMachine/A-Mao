@@ -3,11 +3,10 @@ package cn.studymachine.common.json.deserial;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.StrUtil;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
-import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -16,11 +15,11 @@ import java.util.Date;
  * @author wukun
  * @since 2024/10/22
  */
-public class MultiDateDeserializer extends JsonDeserializer<Date> {
+public class MultiDateDeserializer extends ValueDeserializer<Date> {
 
     @Override
-    public Date deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        String dateStr = p.getText().trim();
+    public Date deserialize(JsonParser p, DeserializationContext ctxt) {
+        String dateStr = p.getString().trim();
         if (StrUtil.isBlank(dateStr)) {
             return null;
         }

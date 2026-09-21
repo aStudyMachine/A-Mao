@@ -2,16 +2,17 @@ package cn.studymachine.common.json.config;
 
 import cn.studymachine.common.json.deserial.MultiDateDeserializer;
 import cn.studymachine.common.json.serial.BigNumberSerializer;
-import com.fasterxml.jackson.databind.ser.std.DateSerializer;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
+import org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration;
+import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
+import tools.jackson.databind.DefaultTyping;
+import tools.jackson.databind.ext.javatime.deser.LocalDateTimeDeserializer;
+import tools.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.ser.jdk.JavaUtilDateSerializer;
+import tools.jackson.databind.ser.std.ToStringSerializer;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -22,7 +23,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 /**
- * jackson 配置
+ * jackson 配置 (Jackson 3, Spring Boot 4 默认)
  *
  * @author wukun
  * @since 2024-11-27
@@ -32,10 +33,10 @@ import java.util.TimeZone;
 public class JacksonConfig {
 
     @Bean
-    public Jackson2ObjectMapperBuilderCustomizer customizer() {
+    public JsonMapperBuilderCustomizer customizer() {
         return builder -> {
             // 全局配置序列化返回 JSON 处理
-            JavaTimeModule javaTimeModule = new JavaTimeModule();
+            SimpleModule javaTimeModule = new SimpleModule();
 
             // 大数字转 string
             javaTimeModule.addSerializer(Long.class, BigNumberSerializer.INSTANCE);
@@ -52,11 +53,11 @@ public class JacksonConfig {
 
             // Date 序列化/反序列化
             SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-            javaTimeModule.addSerializer(Date.class, new DateSerializer(false, sdf));
+            javaTimeModule.addSerializer(Date.class, new JavaUtilDateSerializer(Boolean.FALSE, sdf));
             javaTimeModule.addDeserializer(Date.class, new MultiDateDeserializer());
 
-            builder.modules(javaTimeModule);
-            builder.timeZone(TimeZone.getDefault());
+            builder.addModule(javaTimeModule);
+            builder.defaultTimeZone(TimeZone.getDefault());
             log.debug("初始化 jackson 配置");
         };
     }

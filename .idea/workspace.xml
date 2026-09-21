@@ -1,0 +1,870 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c9c65dc6-a096-4be1-9a59-2f7d16ebaa22" name="Changes" comment="refactor: 移除未使用的ConstraintViolationException处理方法" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CompilerWorkspaceConfiguration">
+    <option name="MAKE_PROJECT_ON_SAVE" value="true" />
+    <option name="PARALLEL_COMPILATION" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="AnnotationType" />
+        <option value="Class" />
+        <option value="Spring Component" />
+        <option value="POJO" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <excluded-from-favorite>
+      <branch-storage>
+        <map>
+          <entry type="LOCAL">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="master" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </excluded-from-favorite>
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="wukun &lt;studymachine@foxmail.com&gt;" />
+      </list>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;aStudyMachine&quot;
+  }
+}</component>
+  <component name="GitToolBoxStore">
+    <option name="projectConfigVersion" value="5" />
+  </component>
+  <component name="GithubDefaultAccount">
+    <option name="defaultAccountId" value="1c616924-6b85-4d90-ab02-c3729f3ccc29" />
+  </component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:aStudyMachine/A-Mao.git&quot;,
+    &quot;accountId&quot;: &quot;1c616924-6b85-4d90-ab02-c3729f3ccc29&quot;
+  }
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="jar://$PROJECT_DIR$/../../../Java/jdk-17.0.11/lib/src.zip!/java.base/java/lang/Class.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$PROJECT_DIR$/../../../maven/repository/com/baomidou/dynamic-datasource-creator/4.2.0/dynamic-datasource-creator-4.2.0-sources.jar!/com/baomidou/dynamic/datasource/creator/DataSourceProperty.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$PROJECT_DIR$/../../../maven/repository/com/baomidou/dynamic-datasource-spring-boot-common/4.2.0/dynamic-datasource-spring-boot-common-4.2.0.jar!/com/baomidou/dynamic/datasource/spring/boot/autoconfigure/DynamicDataSourceProperties.class" root0="SKIP_INSPECTION" />
+    <setting file="jar://$PROJECT_DIR$/../../../maven/repository/com/baomidou/mybatis-plus-annotation/3.5.4.1/mybatis-plus-annotation-3.5.4.1-sources.jar!/com/baomidou/mybatisplus/annotation/IdType.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$PROJECT_DIR$/../../../maven/repository/com/fasterxml/jackson/core/jackson-annotations/2.13.5/jackson-annotations-2.13.5-sources.jar!/com/fasterxml/jackson/annotation/JsonAutoDetect.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$PROJECT_DIR$/../../../maven/repository/com/fasterxml/jackson/core/jackson-databind/2.13.5/jackson-databind-2.13.5-sources.jar!/com/fasterxml/jackson/databind/ObjectMapper.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$PROJECT_DIR$/../../../maven/repository/org/apache/tomcat/embed/tomcat-embed-core/10.1.19/tomcat-embed-core-10.1.19-sources.jar!/jakarta/servlet/http/HttpServletResponse.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$PROJECT_DIR$/../../../maven/repository/org/redisson/redisson/3.24.3/redisson-3.24.3-sources.jar!/org/redisson/api/RRateLimiter.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$PROJECT_DIR$/../../../maven/repository/org/redisson/redisson/3.24.3/redisson-3.24.3-sources.jar!/org/redisson/client/codec/StringCodec.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$PROJECT_DIR$/../../../maven/repository/org/springframework/boot/spring-boot-autoconfigure/3.2.4/spring-boot-autoconfigure-3.2.4-sources.jar!/org/springframework/boot/autoconfigure/jackson/Jackson2ObjectMapperBuilderCustomizer.java" root0="SKIP_INSPECTION" />
+    <setting file="jar://$PROJECT_DIR$/../../../maven/repository/org/springframework/boot/spring-boot-autoconfigure/3.2.4/spring-boot-autoconfigure-3.2.4-sources.jar!/org/springframework/boot/autoconfigure/jackson/JacksonAutoConfiguration.java" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="JRebelWorkspace">
+    <option name="jrebelEnabledAutocompile" value="true" />
+  </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="alwaysUpdateSnapshots" value="true" />
+        <option name="customMavenHome" value="D:\dev\Maven\apache-maven-3.9.9" />
+        <option name="localRepository" value="D:\dev\Maven\repository" />
+        <option name="mavenHomeTypeForPersistence" value="CUSTOM" />
+        <option name="threads" value="32" />
+        <option name="useMavenConfig" value="false" />
+        <option name="userSettingsFile" value="D:\dev\Maven\apache-maven-3.9.9\conf\settings.xml" />
+      </MavenGeneralSettings>
+    </option>
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="jdkForImporter" value="17" />
+        <option name="vmOptionsForImporter" value="-Xmx1500m -Xms1500m" />
+      </MavenImportingSettings>
+    </option>
+    <option name="explicitlyEnabledProfiles" value="alimaven-nexus" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2ct6C3gZRMBReDAh7iaAf5QHyBh" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;LombokPluginIS_LOMBOK_JPS_FIX_ENABLED&quot;: &quot;true&quot;,
+    &quot;Maven.A-Mao [clean,compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.A-Mao [clean,install,-X].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.A-Mao [clean,install...].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.A-Mao [clean,install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.A-Mao [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.A-Mao [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.amao-module-system-service [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Notification.DisplayName-DoNotAsk-Database detector&quot;: &quot;Database detector&quot;,
+    &quot;Notification.DoNotAsk-Database detector&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;false&quot;,
+    &quot;Spring Boot.ExampleApplication.executor&quot;: &quot;Debug&quot;,
+    &quot;Spring Boot.SystemServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.UserServiceApplication.executor&quot;: &quot;Debug&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;1.8&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/dev/Maven/repository/com/baomidou/mybatis-plus-extension/3.5.7/mybatis-plus-extension-3.5.7.jar&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
+    ]
+  }
+}</component>
+  <component name="RdControllerToolWindowsLayoutState" isNewUi="true">
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" weight="0.25" />
+      <window_info id="Commit" order="1" weight="0.25" />
+      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Version Control" order="0" />
+      <window_info anchor="bottom" id="Problems" order="1" />
+      <window_info anchor="bottom" id="Problems View" order="2" />
+      <window_info anchor="bottom" id="Terminal" order="3" />
+      <window_info anchor="bottom" id="Services" order="4" />
+      <window_info anchor="right" content_ui="combo" id="Notifications" order="0" weight="0.25" />
+      <window_info anchor="right" id="AIAssistant" order="1" weight="0.25" />
+      <window_info anchor="right" id="Database" order="2" weight="0.25" />
+      <window_info anchor="right" id="Gradle" order="3" weight="0.25" />
+      <window_info anchor="right" id="Maven" order="4" weight="0.25" />
+    </layout>
+  </component>
+  <component name="ReactorSettings">
+    <option name="notificationShown" value="true" />
+  </component>
+  <component name="RebelAgentSelection">
+    <selection>jr</selection>
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="cn.studymachine.example.manager" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\dev\JetBrains\IdeaProjects\A-Mao\amao-modules\amao-module-user\amao-module-user-api\src\main\java" />
+      <recent name="D:\dev\JetBrains\IdeaProjects\A-Mao\amao-modules\amao-module-user\amao-module-user-service\src\main\resources" />
+      <recent name="D:\dev\JetBrains\IdeaProjects\A-Mao\amao-common\amao-common-nacos\src\main\resources" />
+      <recent name="D:\dev\JetBrains\IdeaProjects\A-Mao\amao-modules\amao-module-system\amao-module-system-service\src\main\resources\mapper" />
+      <recent name="D:\dev\JetBrains\IdeaProjects\A-Mao\amao-modules\amao-module-system\amao-module-system-service\src\main\java\com\studymachine\mapper" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\dev\JetBrains\IdeaProjects\A-Mao\amao-boot" />
+      <recent name="D:\dev\JetBrains\IdeaProjects\A-Mao\amao-common\amao-common-datasource\src\main\resources" />
+      <recent name="D:\dev\JetBrains\IdeaProjects\A-Mao\amao-common\amao-common-redis\src\main\resources\META-INF" />
+      <recent name="D:\dev\JetBrains\IdeaProjects\A-Mao\amao-common\amao-common-web\src\main\resources\META-INF" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="cn.studymachine.common.nacos.config" />
+      <recent name="com.studymachine" />
+      <recent name="cn.studymachine.common.tracelog.interceptor" />
+      <recent name="cn.studymachine.common.redis.util" />
+      <recent name="cn.studymachine.common.redis.manager" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="open RuoYi-Cloud-Plus" />
+      <command value="mvn clean install -X" />
+      <command value="mvn clean install" />
+      <command value="mvn clean" />
+      <command value="mvn clean install -Dmaven.wagon.http.blocker=false" />
+      <command value="mvn install" />
+      <command value="mvn clean compile" />
+    </option>
+  </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.UserServiceApplication">
+    <configuration name="ExampleApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="amao-boot-example" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="cn.studymachine.example.ExampleApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="cn.studymachine.example.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SystemServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="amao-module-system-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="cn.studymachine.SystemServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="cn.studymachine.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="amao-module-user-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="cn.studymachine.UserServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="cn.studymachine.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.UserServiceApplication" />
+        <item itemvalue="Spring Boot.SystemServiceApplication" />
+        <item itemvalue="Spring Boot.ExampleApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-125ca727e0f0-intellij.indexing.shared.core-IU-243.24978.46" />
+        <option value="bundled-js-predefined-d6986cc7102b-76f8388c3a79-JavaScript-IU-243.24978.46" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c9c65dc6-a096-4be1-9a59-2f7d16ebaa22" name="Changes" comment="" />
+      <created>1708918399779</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1708918399779</updated>
+      <workItem from="1708918403637" duration="1793000" />
+      <workItem from="1708926323743" duration="595000" />
+      <workItem from="1708961418335" duration="2914000" />
+      <workItem from="1708994771696" duration="599000" />
+      <workItem from="1709123700425" duration="335000" />
+      <workItem from="1709134617468" duration="1083000" />
+      <workItem from="1709135930471" duration="1302000" />
+      <workItem from="1709169807778" duration="681000" />
+      <workItem from="1709177534184" duration="2814000" />
+      <workItem from="1709254167793" duration="676000" />
+      <workItem from="1709255151287" duration="6476000" />
+      <workItem from="1709307575170" duration="357000" />
+      <workItem from="1709391930632" duration="2463000" />
+      <workItem from="1709457129435" duration="11200000" />
+      <workItem from="1709653085978" duration="4164000" />
+      <workItem from="1709739281023" duration="2949000" />
+      <workItem from="1709742432299" duration="958000" />
+      <workItem from="1709974554680" duration="1408000" />
+      <workItem from="1710067681697" duration="1921000" />
+      <workItem from="1710078042128" duration="268000" />
+      <workItem from="1710078373981" duration="1868000" />
+      <workItem from="1710081010145" duration="1525000" />
+      <workItem from="1710172080937" duration="858000" />
+      <workItem from="1710205044808" duration="169000" />
+      <workItem from="1710205274996" duration="188000" />
+      <workItem from="1710257738707" duration="2171000" />
+      <workItem from="1710292213231" duration="386000" />
+      <workItem from="1710344180786" duration="1729000" />
+      <workItem from="1710377286395" duration="975000" />
+      <workItem from="1710601766828" duration="4892000" />
+      <workItem from="1710773879163" duration="6869000" />
+      <workItem from="1710949672732" duration="904000" />
+      <workItem from="1711035705471" duration="1806000" />
+      <workItem from="1711066482601" duration="606000" />
+      <workItem from="1711069578802" duration="1020000" />
+      <workItem from="1711293521048" duration="729000" />
+      <workItem from="1711382177258" duration="199000" />
+      <workItem from="1711412231654" duration="3123000" />
+      <workItem from="1711417964712" duration="202000" />
+      <workItem from="1711418219899" duration="594000" />
+      <workItem from="1711553911112" duration="741000" />
+      <workItem from="1711934531478" duration="984000" />
+      <workItem from="1712159777639" duration="132000" />
+      <workItem from="1713368954172" duration="2484000" />
+      <workItem from="1713399201139" duration="573000" />
+      <workItem from="1715303378228" duration="127000" />
+      <workItem from="1715392374289" duration="2511000" />
+      <workItem from="1715588497408" duration="7685000" />
+      <workItem from="1715667712117" duration="1344000" />
+      <workItem from="1715675075925" duration="2156000" />
+      <workItem from="1716304656702" duration="3655000" />
+      <workItem from="1716393204083" duration="1706000" />
+      <workItem from="1716426164366" duration="1597000" />
+      <workItem from="1717081309031" duration="2468000" />
+      <workItem from="1717115414794" duration="570000" />
+      <workItem from="1717856709579" duration="2897000" />
+      <workItem from="1717860354594" duration="10679000" />
+      <workItem from="1718091585746" duration="752000" />
+      <workItem from="1718093660005" duration="60000" />
+      <workItem from="1718093760618" duration="568000" />
+      <workItem from="1718094431848" duration="1451000" />
+      <workItem from="1718173189026" duration="565000" />
+      <workItem from="1718177113120" duration="587000" />
+      <workItem from="1719502915305" duration="2241000" />
+      <workItem from="1719534656704" duration="582000" />
+      <workItem from="1719536489719" duration="586000" />
+      <workItem from="1719545159811" duration="593000" />
+      <workItem from="1719546387954" duration="585000" />
+      <workItem from="1719803544799" duration="1000" />
+      <workItem from="1721055541465" duration="2724000" />
+      <workItem from="1721089811383" duration="665000" />
+      <workItem from="1721090781167" duration="7312000" />
+      <workItem from="1721141153259" duration="112000" />
+      <workItem from="1721141318833" duration="3351000" />
+      <workItem from="1721175768919" duration="583000" />
+      <workItem from="1725465082844" duration="114000" />
+      <workItem from="1725495881928" duration="225000" />
+      <workItem from="1725496187028" duration="593000" />
+      <workItem from="1729560087427" duration="50000" />
+      <workItem from="1729560163783" duration="827000" />
+      <workItem from="1729585301320" duration="558000" />
+      <workItem from="1732719313527" duration="4214000" />
+      <workItem from="1733325261464" duration="78000" />
+      <workItem from="1733325543807" duration="469000" />
+      <workItem from="1733411068508" duration="992000" />
+      <workItem from="1733412083473" duration="901000" />
+      <workItem from="1733413696763" duration="1108000" />
+      <workItem from="1733414846796" duration="943000" />
+      <workItem from="1733546288574" duration="8728000" />
+      <workItem from="1733642578486" duration="3636000" />
+      <workItem from="1733649559056" duration="1459000" />
+      <workItem from="1733664918865" duration="2877000" />
+      <workItem from="1733757600623" duration="573000" />
+      <workItem from="1734237071886" duration="2630000" />
+      <workItem from="1738578086221" duration="546000" />
+      <workItem from="1738850622553" duration="1922000" />
+      <workItem from="1739089167488" duration="578000" />
+      <workItem from="1740303240600" duration="209000" />
+      <workItem from="1740305268066" duration="1234000" />
+      <workItem from="1740306519132" duration="5016000" />
+      <workItem from="1740491318816" duration="44000" />
+      <workItem from="1740491384542" duration="223000" />
+      <workItem from="1740491661082" duration="4912000" />
+      <workItem from="1740586609238" duration="928000" />
+      <workItem from="1740891083254" duration="1338000" />
+      <workItem from="1740926528487" duration="1401000" />
+      <workItem from="1741230342384" duration="2289000" />
+      <workItem from="1741239701242" duration="76000" />
+      <workItem from="1741239805610" duration="12070000" />
+      <workItem from="1742302425514" duration="1606000" />
+      <workItem from="1742304367895" duration="2932000" />
+      <workItem from="1742451676790" duration="41000" />
+      <workItem from="1742451739612" duration="239000" />
+      <workItem from="1742526545946" duration="85000" />
+      <workItem from="1742526655380" duration="1799000" />
+      <workItem from="1743252531394" duration="527000" />
+      <workItem from="1743253083202" duration="317000" />
+      <workItem from="1743318353261" duration="2908000" />
+      <workItem from="1744784867651" duration="5102000" />
+      <workItem from="1744879801602" duration="285000" />
+      <workItem from="1744880113835" duration="598000" />
+      <workItem from="1744885791121" duration="594000" />
+      <workItem from="1744963492269" duration="134000" />
+      <workItem from="1745312237015" duration="383000" />
+      <workItem from="1745312626499" duration="51000" />
+      <workItem from="1745312691763" duration="821000" />
+      <workItem from="1745396201989" duration="81000" />
+      <workItem from="1745396296439" duration="604000" />
+    </task>
+    <task id="LOCAL-00029" summary="调整依赖">
+      <option name="closed" value="true" />
+      <created>1710172321673</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1710172321673</updated>
+    </task>
+    <task id="LOCAL-00030" summary="随便改改">
+      <option name="closed" value="true" />
+      <created>1710258407037</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1710258407037</updated>
+    </task>
+    <task id="LOCAL-00031" summary="实体类基类">
+      <option name="closed" value="true" />
+      <created>1710258888228</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1710258888228</updated>
+    </task>
+    <task id="LOCAL-00032" summary="实体类基类">
+      <option name="closed" value="true" />
+      <created>1710258956227</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1710258956227</updated>
+    </task>
+    <task id="LOCAL-00033" summary="mybatis plus 配置">
+      <option name="closed" value="true" />
+      <created>1710345229441</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1710345229441</updated>
+    </task>
+    <task id="LOCAL-00034" summary="删除 copyright">
+      <option name="closed" value="true" />
+      <created>1710377336844</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1710377336844</updated>
+    </task>
+    <task id="LOCAL-00035" summary="补充注释">
+      <option name="closed" value="true" />
+      <created>1710603285698</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1710603285698</updated>
+    </task>
+    <task id="LOCAL-00036" summary="mp 自动填充调整">
+      <option name="closed" value="true" />
+      <created>1710660259541</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1710660259541</updated>
+    </task>
+    <task id="LOCAL-00037" summary="新增jsonUtil">
+      <option name="closed" value="true" />
+      <created>1710775572948</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1710775572948</updated>
+    </task>
+    <task id="LOCAL-00038" summary="路径调整">
+      <option name="closed" value="true" />
+      <created>1710776247226</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1710776247226</updated>
+    </task>
+    <task id="LOCAL-00039" summary="jackson 配置">
+      <option name="closed" value="true" />
+      <created>1710779013309</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1710779013309</updated>
+    </task>
+    <task id="LOCAL-00040" summary="新增 redission 配置">
+      <option name="closed" value="true" />
+      <created>1710949954698</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1710949954698</updated>
+    </task>
+    <task id="LOCAL-00041" summary="redisson 封装">
+      <option name="closed" value="true" />
+      <created>1711036548596</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1711036548596</updated>
+    </task>
+    <task id="LOCAL-00042" summary="注释">
+      <option name="closed" value="true" />
+      <created>1711064871070</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1711064871070</updated>
+    </task>
+    <task id="LOCAL-00043" summary="redis starter 配置">
+      <option name="closed" value="true" />
+      <created>1711293614222</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1711293614222</updated>
+    </task>
+    <task id="LOCAL-00044" summary="注入调整">
+      <option name="closed" value="true" />
+      <created>1711382207411</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1711382207411</updated>
+    </task>
+    <task id="LOCAL-00045" summary="补充注释">
+      <option name="closed" value="true" />
+      <created>1711415726180</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1711415726180</updated>
+    </task>
+    <task id="LOCAL-00046" summary="补充注释">
+      <option name="closed" value="true" />
+      <created>1711554036847</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1711554036847</updated>
+    </task>
+    <task id="LOCAL-00047" summary="补充注释">
+      <option name="closed" value="true" />
+      <created>1711934577389</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1711934577389</updated>
+    </task>
+    <task id="LOCAL-00048" summary="补充注释">
+      <option name="closed" value="true" />
+      <created>1712159822200</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1712159822200</updated>
+    </task>
+    <task id="LOCAL-00049" summary="sa token">
+      <option name="closed" value="true" />
+      <created>1713369219506</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1713369219506</updated>
+    </task>
+    <task id="LOCAL-00050" summary="feat: 升级 spring boot 3 &amp;&amp; jdk 17">
+      <option name="closed" value="true" />
+      <created>1716306447843</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1716306447843</updated>
+    </task>
+    <task id="LOCAL-00051" summary="feat: 升级 spring boot 3 &amp;&amp; jdk 17">
+      <option name="closed" value="true" />
+      <created>1716308013590</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1716308013590</updated>
+    </task>
+    <task id="LOCAL-00052" summary="feat: 升级 spring boot 3 &amp;&amp; jdk 17 (处理编译报错)">
+      <option name="closed" value="true" />
+      <created>1716308226319</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1716308226319</updated>
+    </task>
+    <task id="LOCAL-00053" summary="feat: 通用redis key 调整">
+      <option name="closed" value="true" />
+      <created>1716394121760</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1716394121760</updated>
+    </task>
+    <task id="LOCAL-00054" summary="feat: 通用redis key 调整">
+      <option name="closed" value="true" />
+      <created>1716394710050</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1716394710050</updated>
+    </task>
+    <task id="LOCAL-00055" summary="feat:  数据源部分组件使用spring boot 3 版本">
+      <option name="closed" value="true" />
+      <created>1716394739985</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1716394739985</updated>
+    </task>
+    <task id="LOCAL-00056" summary="feat:  boot模块调整">
+      <option name="closed" value="true" />
+      <created>1716427792273</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1716427792273</updated>
+    </task>
+    <task id="LOCAL-00057" summary="feat: 处理 hibernate-validator 编译 warning">
+      <option name="closed" value="true" />
+      <created>1716427901790</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1716427901790</updated>
+    </task>
+    <task id="LOCAL-00058" summary="feat: 数据库连接池改 hikari">
+      <option name="closed" value="true" />
+      <created>1717084369660</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1717084369660</updated>
+    </task>
+    <task id="LOCAL-00059" summary="feat: trace log 模块 (未完成)">
+      <option name="closed" value="true" />
+      <created>1717861159794</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1717861159795</updated>
+    </task>
+    <task id="LOCAL-00060" summary="注释">
+      <option name="closed" value="true" />
+      <created>1719504513485</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1719504513485</updated>
+    </task>
+    <task id="LOCAL-00061" summary="初始化部分modules">
+      <option name="closed" value="true" />
+      <created>1721058926519</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1721058926519</updated>
+    </task>
+    <task id="LOCAL-00062" summary="补充注释">
+      <option name="closed" value="true" />
+      <created>1721145230437</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1721145230437</updated>
+    </task>
+    <task id="LOCAL-00063" summary="模块调整">
+      <option name="closed" value="true" />
+      <created>1721145346719</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1721145346719</updated>
+    </task>
+    <task id="LOCAL-00064" summary="补充注释">
+      <option name="closed" value="true" />
+      <created>1721145908047</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1721145908047</updated>
+    </task>
+    <task id="LOCAL-00065" summary="feat: json 模块补充多格式日期反序列化配置">
+      <option name="closed" value="true" />
+      <created>1732719714739</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1732719714740</updated>
+    </task>
+    <task id="LOCAL-00066" summary="feat: result 调整到web模块">
+      <option name="closed" value="true" />
+      <created>1732720934172</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1732720934172</updated>
+    </task>
+    <task id="LOCAL-00067" summary="feat: DDL语句">
+      <option name="closed" value="true" />
+      <created>1733555381525</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1733555381525</updated>
+    </task>
+    <task id="LOCAL-00068" summary="feat: TraceLogWebInterceptor.java 位置条状">
+      <option name="closed" value="true" />
+      <created>1733559819030</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1733559819030</updated>
+    </task>
+    <task id="LOCAL-00069" summary="feat:  增加单独的TraceLog 切面组件">
+      <option name="closed" value="true" />
+      <created>1733559842378</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1733559842378</updated>
+    </task>
+    <task id="LOCAL-00070" summary="feat: 多格式日期反序列化 使用hutool date time">
+      <option name="closed" value="true" />
+      <created>1733569363693</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1733569363693</updated>
+    </task>
+    <task id="LOCAL-00071" summary="feat: 配置文件调整">
+      <option name="closed" value="true" />
+      <created>1733569512660</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1733569512660</updated>
+    </task>
+    <task id="LOCAL-00072" summary="feat: sys模块初始化">
+      <option name="closed" value="true" />
+      <created>1733650865290</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1733650865291</updated>
+    </task>
+    <task id="LOCAL-00073" summary="feat: nacos starter">
+      <option name="closed" value="true" />
+      <created>1733665466922</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1733665466922</updated>
+    </task>
+    <task id="LOCAL-00074" summary="feat: user 模块初始化">
+      <option name="closed" value="true" />
+      <created>1733667473606</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1733667473606</updated>
+    </task>
+    <task id="LOCAL-00075" summary="feat: 初始化字典实体类">
+      <option name="closed" value="true" />
+      <created>1733667792541</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1733667792541</updated>
+    </task>
+    <task id="LOCAL-00076" summary="refactor: 优化代码结构和.gitignore配置&#10;&#10;- 修改.gitignore，排除整个.fastRequest目录&#10;- 移除BaseModel中的冗余注释&#10;- 简化SysDictKeyModel和SysDictValueModel的代码结构&#10;  - 删除不必要的注解&#10;  - 移除未使用的构造函数">
+      <option name="closed" value="true" />
+      <created>1740321665240</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1740321665240</updated>
+    </task>
+    <task id="LOCAL-00077" summary="refactor: 移除未使用的ConstraintViolationException处理方法">
+      <option name="closed" value="true" />
+      <created>1740493022928</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1740493022928</updated>
+    </task>
+    <option name="localTasksCounter" value="78" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="feat: 升级 spring boot 3 &amp;&amp; jdk 17 (处理编译报错)" />
+    <MESSAGE value="feat: 通用redis key 调整" />
+    <MESSAGE value="feat:  数据源部分组件使用spring boot 3 版本" />
+    <MESSAGE value="feat:  boot模块调整" />
+    <MESSAGE value="feat: 处理 hibernate-validator 编译 warning" />
+    <MESSAGE value="feat: 数据库连接池改 hikari" />
+    <MESSAGE value="feat: trace log 模块 (未完成)" />
+    <MESSAGE value="注释" />
+    <MESSAGE value="初始化部分modules" />
+    <MESSAGE value="模块调整" />
+    <MESSAGE value="补充注释" />
+    <MESSAGE value="feat: json 模块补充多格式日期反序列化配置" />
+    <MESSAGE value="feat: result 调整到web模块" />
+    <MESSAGE value="feat: DDL语句" />
+    <MESSAGE value="feat: TraceLogWebInterceptor.java 位置调整" />
+    <MESSAGE value="feat: TraceLogWebInterceptor.java 位置调整" />
+    <MESSAGE value="feat:  增加单独的TraceLog 切面组件" />
+    <MESSAGE value="feat: 多格式日期反序列化 使用hutool date time" />
+    <MESSAGE value="feat: 配置文件调整" />
+    <MESSAGE value="feat: sys模块初始化" />
+    <MESSAGE value="feat: nacos starter" />
+    <MESSAGE value="feat: user 模块初始化" />
+    <MESSAGE value="feat: 初始化字典实体类" />
+    <MESSAGE value="refactor: 优化代码结构和.gitignore配置&#10;&#10;- 修改.gitignore，排除整个.fastRequest目录&#10;- 移除BaseModel中的冗余注释&#10;- 简化SysDictKeyModel和SysDictValueModel的代码结构&#10;  - 删除不必要的注解&#10;  - 移除未使用的构造函数" />
+    <MESSAGE value="refactor: 移除未使用的ConstraintViolationException处理方法" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: 移除未使用的ConstraintViolationException处理方法" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

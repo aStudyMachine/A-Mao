@@ -2,13 +2,10 @@ package cn.studymachine.common.datasource.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
-import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -34,17 +31,6 @@ public class MybatisPlusConfig {
         mybatisPlusInterceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
 
         return mybatisPlusInterceptor;
-    }
-
-    /**
-     * 逻辑删除插件
-     *
-     * @return LogicSqlInjector
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public ISqlInjector sqlInjector() {
-        return new DefaultSqlInjector();
     }
 
     /**

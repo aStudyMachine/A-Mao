@@ -4,52 +4,37 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!--<parent>
-        &lt;!&ndash; Spring Boot 基础依赖 &ndash;&gt;
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
-        <relativePath/>
-    </parent>-->
-
     <groupId>cn.studymachine</groupId>
     <artifactId>A-Mao</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!--依赖组件版本号-->
 
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
         <hutool-all.version>5.8.27</hutool-all.version>
 
         <!--spring boot-->
-        <spring-boot.version>3.2.4</spring-boot.version>
+        <spring-boot.version>4.0.8</spring-boot.version>
         <!--spring cloud (alibaba)-->
-        <spring.cloud.version>2023.0.1</spring.cloud.version>
-        <alibaba.cloud.version>2022.0.0.0</alibaba.cloud.version>
+        <spring.cloud.version>2025.1.0</spring.cloud.version>
+        <alibaba.cloud.version>2025.1.0.0</alibaba.cloud.version>
 
         <!--mapstruct-->
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
 
         <!--mybatis-plus-->
-        <mybatis-plus.veresion>3.5.7</mybatis-plus.veresion>
+        <mybatis-plus.version>3.5.17</mybatis-plus.version>
 
         <!-- dynamic-datasource-->
-        <dynamic-ds.version>4.3.0</dynamic-ds.version>
-        <!-- druid 数据库连接池-->
-        <druid-spring-boot-starter.version>1.2.21</druid-spring-boot-starter.version>
+        <dynamic-ds.version>4.5.0</dynamic-ds.version>
 
-        <redisson.version>3.24.3</redisson.version>
-        <lock4j.version>2.2.5</lock4j.version>
-
-        <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
-
+        <redisson.version>4.7.0</redisson.version>
 
     </properties>
 
@@ -127,19 +112,20 @@
 
            <dependency>
                <groupId>com.baomidou</groupId>
-               <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-               <version>${mybatis-plus.veresion}</version>
+               <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
+               <version>${mybatis-plus.version}</version>
            </dependency>
 
+           <!-- MP 3.5.9+ 分页等插件拆分为可选依赖 -->
            <dependency>
-               <groupId>org.hibernate.validator</groupId>
-               <artifactId>hibernate-validator</artifactId>
-               <version>${hibernate-validator.version}</version>
+               <groupId>com.baomidou</groupId>
+               <artifactId>mybatis-plus-jsqlparser</artifactId>
+               <version>${mybatis-plus.version}</version>
            </dependency>
 
            <dependency>
                <groupId>com.baomidou</groupId>
-               <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
+               <artifactId>dynamic-datasource-spring-boot4-starter</artifactId>
                <version>${dynamic-ds.version}</version>
            </dependency>
 
@@ -149,20 +135,25 @@
                <artifactId>redisson-spring-boot-starter</artifactId>
                <version>${redisson.version}</version>
            </dependency>
-
-           <dependency>
-               <groupId>com.baomidou</groupId>
-               <artifactId>lock4j-redisson-spring-boot-starter</artifactId>
-               <version>${lock4j.version}</version>
-           </dependency>
-
-           <dependency>
-               <groupId>com.alibaba</groupId>
-               <artifactId>druid-spring-boot-starter</artifactId>
-               <version>${druid-spring-boot-starter.version}</version>
-           </dependency>
        </dependencies>
     </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <release>25</release>
+                        <!-- JDK 23+ 默认禁用隐式注解处理, 显式开启以支持 lombok -->
+                        <proc>full</proc>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
 
     <dependencies>

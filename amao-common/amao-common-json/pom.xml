@@ -12,8 +12,6 @@
     <artifactId>amao-common-json</artifactId>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -25,16 +23,17 @@
         </dependency>
 
 
-        <!--<editor-fold desc="json工具类库 Jackson">-->
+        <!--<editor-fold desc="json工具类库 Jackson 3 (Spring Boot 4 默认)">-->
 
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
+        <!-- Spring Boot 4 的 Jackson 3 自动配置模块 (JsonMapperBuilderCustomizer / JacksonAutoConfiguration) -->
         <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-jackson</artifactId>
         </dependency>
         <!--</editor-fold>-->
 

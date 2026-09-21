@@ -6,13 +6,11 @@ import cn.studymachine.common.redis.handler.KeyPrefixHandler;
 import cn.studymachine.common.redis.manager.PlusSpringCacheManager;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.client.codec.StringCodec;
 import org.redisson.codec.CompositeCodec;
-import org.redisson.codec.TypedJsonJacksonCodec;
+import org.redisson.codec.TypedJsonJackson3Codec;
 import org.redisson.spring.starter.RedissonAutoConfigurationCustomizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -20,6 +18,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
+import tools.jackson.databind.DefaultTyping;
+import tools.jackson.databind.DatabindContext;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.jsontype.PolymorphicTypeValidator;
 
 /**
  * redis配置
@@ -34,18 +37,39 @@ import org.springframework.context.annotation.Bean;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class RedisConfiguration {
 
+    /**
+     * 宽松的多态类型校验器 (等价 Jackson 2 的 LaissezFaireSubTypeValidator, Jackson 3 中该类已改为包私有)
+     */
+    private static final PolymorphicTypeValidator LAISSEZ_FAIRE_TYPE_VALIDATOR = new PolymorphicTypeValidator.Base() {
+        @Override
+        public Validity validateBaseType(DatabindContext ctxt, JavaType baseType) {
+            return Validity.ALLOWED;
+        }
+
+        @Override
+        public Validity validateSubClassName(DatabindContext ctxt, JavaType baseType, String subClassName) {
+            return Validity.ALLOWED;
+        }
+
+        @Override
+        public Validity validateSubType(DatabindContext ctxt, JavaType baseType, JavaType subType) {
+            return Validity.ALLOWED;
+        }
+    };
+
     private final RedissonProperties redissonProperties;
     private final ObjectMapper objectMapper;
 
     @Bean
     public RedissonAutoConfigurationCustomizer redissonCustomizer() {
         return config -> {
-            /* jackson 序列化 配置 */
-            ObjectMapper om = objectMapper.copy();
-            om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-            // 指定序列化输入的类型，类必须是非final修饰的。序列化时将对象全类名一起保存下来
-            om.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
-            TypedJsonJacksonCodec jsonCodec = new TypedJsonJacksonCodec(Object.class, om);
+            /* jackson 序列化 配置 (Jackson 3: ObjectMapper 不可变, 通过 rebuild 派生新实例) */
+            ObjectMapper om = objectMapper.rebuild()
+                    .changeDefaultVisibility(vc -> vc.with(JsonAutoDetect.Visibility.ANY))
+                    // 指定序列化输入的类型，类必须是非final修饰的。序列化时将对象全类名一起保存下来
+                    .activateDefaultTyping(LAISSEZ_FAIRE_TYPE_VALIDATOR, DefaultTyping.NON_FINAL)
+                    .build();
+            TypedJsonJackson3Codec jsonCodec = new TypedJsonJackson3Codec(Object.class, om);
             // 组合序列化 key 使用 String 内容使用通用 json 格式
             CompositeCodec codec = new CompositeCodec(StringCodec.INSTANCE, jsonCodec, jsonCodec);
 

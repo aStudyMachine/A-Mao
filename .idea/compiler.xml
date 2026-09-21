@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <option name="BUILD_PROCESS_HEAP_SIZE" value="1500" />
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="amao-module-system-service" />
+        <module name="amao-module-user-api" />
+        <module name="amao-module-user-service" />
+        <module name="amao-common-core" />
+        <module name="amao-common-satoken" />
+        <module name="amao-common-nacos" />
+        <module name="amao-common-datasource" />
+        <module name="amao-common-redis" />
+        <module name="amao-boot-example" />
+        <module name="amao-common-json" />
+        <module name="amao-module-system-api" />
+        <module name="amao-common-tracelog" />
+        <module name="amao-common-web" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="17" />
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="amao-boot-example" options="" />
+      <module name="amao-common" options="" />
+      <module name="amao-common-core" options="" />
+      <module name="amao-common-datasource" options="" />
+      <module name="amao-common-json" options="" />
+      <module name="amao-common-redis" options="" />
+      <module name="amao-common-satoken" options="" />
+      <module name="amao-common-web" options="" />
+    </option>
+  </component>
+</project>
