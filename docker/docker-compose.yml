@@ -45,9 +45,41 @@ services:
     networks:
       - amao-net
 
+  # Nacos 3.1.1 单机（与 spring-cloud-alibaba 2025.1.0.0 的 nacos-client 3.1.1 对齐）
+  # 端口：8848 HTTP API（context /nacos）、9848 gRPC（=8848+1000）、8080 控制台
+  # 即使 NACOS_AUTH_ENABLE=false，镜像启动脚本仍强制要求 TOKEN/IDENTITY 三项（非空即可）
+  # 开发默认关闭鉴权；生产必须开启鉴权并更换密钥
+  nacos:
+    image: nacos/nacos-server:v3.1.1
+    container_name: amao-nacos
+    restart: unless-stopped
+    environment:
+      MODE: standalone
+      NACOS_AUTH_ENABLE: "false"
+      NACOS_AUTH_TOKEN: "QS1NYW8tTmFjb3MtRGV2LVNlY3JldC1LZXktMzJCLU1pbg=="
+      NACOS_AUTH_IDENTITY_KEY: nacos
+      NACOS_AUTH_IDENTITY_VALUE: nacos
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "8080:8080"
+    volumes:
+      - nacos-data:/home/nacos/data
+      - nacos-logs:/home/nacos/logs
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fsS http://127.0.0.1:8080/v3/console/health/readiness || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+    networks:
+      - amao-net
+
 volumes:
   mysql-data:
   redis-data:
+  nacos-data:
+  nacos-logs:
 
 networks:
   amao-net:
