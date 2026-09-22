@@ -51,3 +51,21 @@ redisson:
     timeout: 3000
     # 发布和订阅连接池大小
     subscriptionConnectionPoolSize: 50
+
+# Sa-Token（决策7：Header Bearer，Redis 共享会话）
+sa-token:
+  token-name: Authorization
+  token-prefix: Bearer
+  is-read-cookie: false
+  is-read-header: true
+  is-concurrent: true
+  is-share: false
+  token-style: uuid
+  timeout: 604800
+  active-timeout: -1
+  is-log: false
+
+# 登录校验排除路径（默认含 /api/auth/login、/api/rpc/**，可覆盖只增不减）
+# amao.satoken.exclude-paths:
+#   - /api/auth/login
+#   - /api/rpc/**

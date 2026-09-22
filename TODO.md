@@ -4,20 +4,20 @@
 
 ## 近期待办
 
-- [ ] satoken 认证能力实现——当前 mao-common-satoken 仅有 pom 依赖的空壳，认证能力预留未实现；实现时同步更新 CONTEXT.md 与架构规范 §7。
-- [ ] system/user 模块 Controller 层实现——当前仅 Model/Mapper + 门面本地适配器骨架；实现后按红线走 Result<T> 统一响应。
-- [ ] 跨模块 Feign/HTTP 适配器——微服务侧用适配器实现 *-api 门面端口（适配器放 boot 或独立装配，不进业务包）。
-- [ ] 前端 Vue 3 工程建立——建立后在 dev.ps1 / uild.ps1 增加 frontend 单元，并启动 OpenAPI 契约生成（架构规范 §4.1）。
-- [ ] 域机制文档按业务铺开回填——docs/域机制.md 当前为占位章节。
+- [ ] 前端 Vue 3 工程建立——建立后在 dev.ps1 / build.ps1 增加 frontend 单元，并启动 OpenAPI 契约生成（架构规范 §4.1）。
+- [ ] RBAC 管理端 CRUD / 菜单树——登录鉴权最小闭环已落地，管理端后续迭代。
+- [ ] `/api/rpc/**` 内部签名——本期放行（ADR-0001），后续收紧。
 
 ## 待决策
 
-- [ ] 字典/RBAC 表与 BaseModel 公共字段对齐——	_sys_role 等 RBAC 四表目前缺 create_by/trace_id 等审计字段，与 BaseModel 不对齐；是否补齐需作者拍板（补齐改动 doc/DDL.sql 与对应 Model 骨架）。
+- [ ] 无。
 
 ## 遗留观察（延续观察，不影响正常流程）
 
-- [ ] Spring Cloud Alibaba 2025.1.0.0 与 Spring Boot 4.0.8 的兼容性观察——若 nacos/服务发现出现异常，优先核对版本矩阵。
+- [ ] Spring Cloud Alibaba 2025.1.0.0 与 Spring Boot 4.0.8 的兼容性观察——本期已定 Feign 直连方案，Nacos 单独立项；若 nacos/服务发现出现异常，优先核对版本矩阵。
 - [ ] boot 模块 fat jar 体积观察——AGENTS 要求 fat jar ≤100MB，本轮仅接入 spring-boot-maven-plugin，未做体积达标验证。
+- [ ] MetaObjectHandler 审计字段自动填充（create_by/creator_name/update_by/updater_name）仍注释未实现——写库路径需手工填或后续补齐；种子 SQL 已手工填。
+- [ ] Sa-Token Redisson starter 与既有 redisson-spring-boot-starter 自动装配共存情况——双服务启动后关注会话读写是否异常。
 
 ## 等外部输入
 

@@ -19,9 +19,23 @@
     <dependencies>
         <dependency>
             <groupId>cn.studymachine</groupId>
+            <artifactId>amao-common-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.studymachine</groupId>
             <artifactId>amao-common-redis</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-spring-boot4-starter</artifactId>
+        </dependency>
 
+        <!-- 会话共享走 Redisson，与 ama-common-redis 同客户端 -->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-redisson-spring-boot-starter</artifactId>
+        </dependency>
     </dependencies>
 </project>

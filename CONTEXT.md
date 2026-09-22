@@ -16,8 +16,14 @@
 ### starter（自研公共 starter）
 
 **starter (self-developed starter)**:
-`amao-common` 下的 7 个模块（core/datasource/json/redis/satoken/tracelog/web）；云装配模块在 `amao-cloud`（如 nacos），微服务专用，单体禁止引入，以 Spring Boot 自研 starter 形态提供能力，通过 `AutoConfiguration.imports` 自动装配。判定：位于 `amao-common/amao-common-*` 且含 `META-INF/spring/...AutoConfiguration.imports` 的模块。跨模块共性能力第二次出现即收编进对应 starter（架构规范 §4.1）。
+`amao-common` 下的 7 个模块（core/datasource/json/redis/satoken/tracelog/web）；云装配模块在 `amao-cloud`（如 nacos），微服务专用，单体禁止引入，以 Spring Boot 自研 starter 形态提供能力，通过 `AutoConfiguration.imports` 自动装配。判定：位于 `amao-common/amao-common-*` 且含 `META-INF/spring/...AutoConfiguration.imports` 的模块。跨模块共性能力第二次出现即收编进对应 starter（架构规范 §4.1）。satoken starter 能力：全局登录拦截（SaInterceptor）+ 注解鉴权 + NotLogin/NotPermission 异常映射为 Result。
 _Avoid_: common 模块、公共包（语义模糊，看不出自动装配契约与共享层地位）
+
+### 认证会话 / 权限标识
+
+**auth session / permission code**:
+登录会话由 Sa-Token 维护并落 Redis，双服务共享；`token-name=Authorization`、`token-prefix=Bearer`。权限标识（permission code）形如 `sys:dict:list`，落 `t_sys_role_permission.permission`；角色标识取 `t_sys_role.role_name`。跨服务权限读取只经 `UserPermFacade` 端口，禁止直连对方表。
+_Avoid_: ticket、JWT 会话（本期非 JWT）、menu code（菜单树本期不做）、role code（本项目角色无独立 code 字段）
 
 ### BaseModel 审计字段
 

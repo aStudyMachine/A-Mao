@@ -159,6 +159,9 @@ logs/
 .opencode/
 .mimocode/
 
+### Agent 方案稿（本地规划产物，不入库）
+.agents/plan/
+
 ### Agent 运行时个人文件
 SOUL.md
 TOOLS.md

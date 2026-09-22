@@ -36,6 +36,9 @@
 
         <redisson.version>4.7.0</redisson.version>
 
+        <!--sa-token-->
+        <sa-token.version>1.46.0</sa-token.version>
+
     </properties>
 
     <modules>
@@ -145,6 +148,18 @@
                <groupId>org.redisson</groupId>
                <artifactId>redisson-spring-boot-starter</artifactId>
                <version>${redisson.version}</version>
+           </dependency>
+
+           <!-- sa-token: Boot4 starter + Redisson 会话共享（与 ama-common-redis 同客户端，避开 Jackson3/RedisTemplate 兼容问题） -->
+           <dependency>
+               <groupId>cn.dev33</groupId>
+               <artifactId>sa-token-spring-boot4-starter</artifactId>
+               <version>${sa-token.version}</version>
+           </dependency>
+           <dependency>
+               <groupId>cn.dev33</groupId>
+               <artifactId>sa-token-redisson-spring-boot-starter</artifactId>
+               <version>${sa-token.version}</version>
            </dependency>
            <dependency>
                <groupId>cn.studymachine</groupId>

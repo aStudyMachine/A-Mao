@@ -3,6 +3,7 @@ package cn.studymachine.common.web.config;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.studymachine.common.web.Result;
 import cn.studymachine.common.web.ResultCode;
+import cn.studymachine.common.web.exception.BizException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -81,6 +82,15 @@ public class GlobalExceptionHandler {
         return Result.fail(ResultCode.METHOD_NOT_SUPPORTED, e.getMessage());
     }
 
+
+    /**
+     * 业务异常：HTTP 200 + Result.code（与鉴权失败约定一致，前端读 body）。
+     */
+    @ExceptionHandler(BizException.class)
+    public Result<Void> handleError(BizException e) {
+        log.warn("业务异常: code={} message={}", e.getCode(), e.getMessage());
+        return Result.fail(ResultCode.FAILURE, e.getMessage());
+    }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
