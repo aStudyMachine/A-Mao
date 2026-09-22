@@ -1,0 +1,78 @@
+# ============================================================
+#  行尾与文本/二进制分类的唯一权威
+#
+#  目的：不依赖各台机器的 core.autocrlf 配置，保证任意机器、任意
+#        平台 checkout 出来的行尾一致（多机可移植开发的前提）。
+#  规则：文本文件仓库与工作区统一 LF；仅 Windows 专用脚本保留
+#        CRLF；二进制资源显式锁定，严禁任何行尾/编码转换。
+#  本文件必须在项目首次提交前入库——行尾污染是整库性的，事后清理
+#  代价远大于第一天配好。
+# ============================================================
+
+# 默认：自动判定文本，统一 LF
+* text=auto eol=lf
+
+# ---- Windows 专用脚本（仅在 Windows 执行，保留 CRLF 更稳妥）----
+*.ps1  text eol=crlf
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+
+# ---- 二进制（不可再生资产与编译产物必须锁死，禁止任何转换）----
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.ico   binary
+*.bmp   binary
+*.gif   binary
+*.webp  binary
+*.xlsx  binary
+*.xls   binary
+*.doc   binary
+*.docx  binary
+*.pdf   binary
+*.zip   binary
+*.gz    binary
+*.tar   binary
+*.7z    binary
+*.exe   binary
+*.dll   binary
+*.so    binary
+*.dylib binary
+*.jar   binary
+*.ttf   binary
+*.otf   binary
+*.woff  binary
+*.woff2 binary
+*.eot   binary
+*.mp3   binary
+*.mp4   binary
+
+# ---- 文本文件显式声明（按技术栈增删）----
+*.py        text eol=lf
+*.java      text eol=lf
+*.kt        text eol=lf
+*.groovy    text eol=lf
+*.js        text eol=lf
+*.mjs       text eol=lf
+*.cjs       text eol=lf
+*.ts        text eol=lf
+*.tsx       text eol=lf
+*.jsx       text eol=lf
+*.vue       text eol=lf
+*.css       text eol=lf
+*.scss      text eol=lf
+*.less      text eol=lf
+*.html      text eol=lf
+*.xml       text eol=lf
+*.sql       text eol=lf
+*.gradle    text eol=lf
+*.kts       text eol=lf
+*.properties text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.toml      text eol=lf
+*.json      text eol=lf
+*.md        text eol=lf
+*.txt       text eol=lf
+*.sh        text eol=lf
+*.svg       text eol=lf
