@@ -1,0 +1,32 @@
+# ============================================================
+#  编辑器行为统一（缩进 / 编码 / 行尾）
+#
+#  .gitattributes 管 git 入库时的规范化，本文件管编辑器写出的实际
+#  字节，两者配套才能在任意机器上保持一致。基线四空格；前端生态按
+#  社区惯例两空格。
+# ============================================================
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{ps1,bat,cmd}]
+end_of_line = crlf
+
+[*.{md,markdown}]
+# Markdown 用行尾双空格表示硬换行，禁止自动裁剪尾随空格
+trim_trailing_whitespace = false
+
+[*.{json,yaml,yml,toml}]
+indent_size = 2
+
+# ---- 前端生态（社区惯例两空格）----
+[*.{js,mjs,cjs,ts,tsx,jsx,vue,css,scss,less,html}]
+indent_size = 2
+
+# ---- Java/Kotlin（四空格，随全局基线；如需调整在此追加）----

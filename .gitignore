@@ -135,3 +135,33 @@ cwallet.sso.lck
 ### agent
 .trae
 
+### 环境与密钥（永不入库；只允许提交 .env.example 模板）
+.env
+.env.*
+!.env.example
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+### 前端与通用构建产物（为前端工程预埋）
+node_modules/
+dist/
+out/
+coverage/
+logs/
+.vite/
+
+### Agent 专属目录（本地 junction，不入库；技能统一源 .agents/skills/ 入库）
+.claude/
+.codebuddy/
+.zcode/
+.opencode/
+.mimocode/
+
+### Agent 运行时个人文件
+SOUL.md
+TOOLS.md
+USER.md
+IDENTITY.md
+
