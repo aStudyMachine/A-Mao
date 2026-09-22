@@ -23,11 +23,13 @@
 #      mvn -U dependency:resolve，无需清空重建。
 #
 # 用法：
-#   .\dev.ps1           # 环境检查 + 启动源码调试
-#   .\dev.ps1 -Check    # 仅做环境检查，不启动
+#   .\dev.ps1                    # 环境检查 + 启动全部单元
+#   .\dev.ps1 -Check             # 仅做环境检查，不启动
+#   .\dev.ps1 -Unit backend      # 只启动指定单元（可多个：-Unit a,b）
 # =====================================================================
 param(
-    [switch]$Check
+    [switch]$Check,
+    [string[]]$Unit
 )
 
 $ErrorActionPreference = "Stop"
@@ -51,6 +53,21 @@ $Units = @(
         StartCommand = ".\mvnw.cmd -pl amao-boot/amao-boot-example -am spring-boot:run"
     }
 )
+
+# ---- 单元筛选（-Unit 指定则只处理匹配项；未指定处理全部）----
+if ($Unit -and $Unit.Count -gt 0) {
+    $ActiveUnits = @()
+    foreach ($name in $Unit) {
+        $match = @($Units | Where-Object { $_.Name -eq $name })
+        if ($match.Count -eq 0) {
+            $available = ($Units | ForEach-Object { $_.Name }) -join ', '
+            throw "未知单元名：$name（可用：$available）"
+        }
+        $ActiveUnits += $match[0]
+    }
+} else {
+    $ActiveUnits = $Units
+}
 
 function Resolve-Toolchain {
     param([string[]]$Candidates, [string]$ExpectedVersion, [string]$UnitName)
@@ -112,7 +129,7 @@ function Pause-IfInteractive {
 
 try {
     # ---- 阶段 1：逐单元解析工具链 + 环境就绪检查/重建 ----
-    foreach ($unit in $Units) {
+    foreach ($unit in $ActiveUnits) {
         $tool = Resolve-Toolchain -Candidates $unit.ToolchainCandidates -ExpectedVersion $unit.ExpectedVersion -UnitName $unit.Name
         Write-Host "==> [$($unit.Name)] 工具链：$tool" -ForegroundColor DarkGray
         if (-not (Test-EnvReady -UnitName $unit.Name -EnvDir $unit.EnvDir -LockFile $unit.LockFile)) {
@@ -127,7 +144,7 @@ try {
 
     # ---- 阶段 2：逐单元并行启动调试进程；任一失败则停止全部已启动进程 ----
     $started = @()
-    foreach ($unit in $Units) {
+    foreach ($unit in $ActiveUnits) {
         Write-Host "==> [$($unit.Name)] 启动源码调试：$($unit.StartCommand)" -ForegroundColor Cyan
         try {
             $cmd = '"' + $unit.StartCommand + '"'
