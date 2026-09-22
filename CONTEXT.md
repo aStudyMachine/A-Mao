@@ -16,7 +16,7 @@
 ### starter（自研公共 starter）
 
 **starter (self-developed starter)**:
-`amao-common` 下的 8 个模块（core/datasource/json/nacos/redis/satoken/tracelog/web），以 Spring Boot 自研 starter 形态提供能力，通过 `AutoConfiguration.imports` 自动装配。判定：位于 `amao-common/amao-common-*` 且含 `META-INF/spring/...AutoConfiguration.imports` 的模块。跨模块共性能力第二次出现即收编进对应 starter（架构规范 §4.1）。
+`amao-common` 下的 7 个模块（core/datasource/json/redis/satoken/tracelog/web）；云装配模块在 `amao-cloud`（如 nacos），微服务专用，单体禁止引入，以 Spring Boot 自研 starter 形态提供能力，通过 `AutoConfiguration.imports` 自动装配。判定：位于 `amao-common/amao-common-*` 且含 `META-INF/spring/...AutoConfiguration.imports` 的模块。跨模块共性能力第二次出现即收编进对应 starter（架构规范 §4.1）。
 _Avoid_: common 模块、公共包（语义模糊，看不出自动装配契约与共享层地位）
 
 ### BaseModel 审计字段
@@ -34,7 +34,7 @@ _Avoid_: 返回体、ResponseEntity（掩盖"必须走统一响应"这条红线�
 ### api/service 子模块
 
 **api/service submodules**:
-`amao-modules` 下每个业务域拆两个子模块：`*-api` 承载跨模块 RPC DTO 契约（当前为空壳，契约未定）；`*-service` 承载业务实现（Model/Mapper/Service/Controller）。
+mao-modules 下每个业务域拆两个子模块：*-api 承载跨域门面端口接口 + DTO（如 UserQueryFacade/UserDTO）；*-service 承载业务实现（Model/Mapper/Service 与门面本地适配器）。跨域只准依赖 *-api，禁止摸对方 *-service 内部或直连对方表。
 _Avoid_: client 模块、facade 模块（本项目不用 RPC client 语义；api 就是契约层）
 
 ### traceId
