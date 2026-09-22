@@ -1,28 +1,55 @@
 ---
 name: grilling
-description: Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.
+description: 设计树访谈。当用户要评审或澄清方案、架构决策、功能边界，或要求进行压力测试、反复追问时使用；通过多轮问题暴露未决决策，形成共享理解后再行动。
 ---
 
-Interview the user relentlessly until you reach a shared understanding. Map this as a **design tree**: every decision branches into the decisions that hang off it.
+# grilling（设计树访谈）
 
-Work the tree in **rounds**. The **frontier** is every decision whose prerequisites are already settled: the questions you can ask _now_ without guessing at answers you haven't heard yet. Ask the whole frontier in one round: number each question and give your recommended answer. Then wait for the user's answers before the next round.
+通过设计树把模糊想法拆成可确认的决策。事实由 Agent 查找，决策由用户拍板；在共享理解确认前，不实施代码、文档结构或配置变更。
 
-Format a round like so:
+## 工作流程
 
+### 1. 建立设计树
+
+- 从用户目标、范围和交付结果开始。
+- 把每个决定拆成节点，并标出前置依赖。
+- 区分三类内容：已确认事实、待用户决定的选择、Agent 可以提出的建议。
+
+### 2. 计算当前 frontier
+
+frontier 是所有前置决策已经确定、现在可以回答的问题。每轮只询问当前 frontier，不提前询问依赖尚未确定的问题。
+
+一次询问覆盖整个当前 frontier。每个问题必须编号、给出推荐答案，并说明选择影响：
+
+```text
+❓ Q1 - <决策标题>：<问题与可选方案>
+
+➡️ 推荐：<推荐答案及简短理由>
 ```
-❓ **Q1** - **<question title>**: <question body, might be multiple paragraphs, including multiple choices>
 
-➡️ <your recommended answer>
+### 3. 获取事实
 
----
+问题涉及仓库结构、代码、配置、文档、命令或工具能力时，Agent 先自行只读检查。不要把可以从环境查到的事实转成用户问题；只有真正需要用户偏好的决策才交给用户。
 
-❓ **Q2** - **<question title>**: <question body, might be multiple paragraphs, including multiple choices>
+### 4. 根据回答推进
 
-➡️ <your recommended answer>
-```
+- 用户回答后重新计算设计树和 frontier。
+- 已确定的选择成为后续节点的前置条件。
+- 不把未回答的问题当成默认同意。
+- 如果新事实推翻了既有假设，明确标出受影响的分支并重新提问。
 
-Each round the user answers reshapes the tree: settled decisions push the frontier outward and unblock questions that depended on them. Recompute the frontier and ask the next round. A question whose answer depends on another question still open in this round belongs to a _later_ round, not this one.
+### 5. 收束与确认
 
-Finding _facts_ is your job, never the user's. When a frontier question needs a fact from the environment (filesystem, tools, etc.), dispatch a sub-agent to find it; don't ask the user for anything you could look up yourself. Don't block on it: a running exploration is an unsettled prerequisite, so only the questions downstream of it wait for the sub-agent to report; ask the rest of the frontier now. The _decisions_ are the user's: put each to them and wait.
+当 frontier 为空时，汇总目标、范围、关键决策、排除项、风险和仍需外部输入的事项，然后明确询问用户是否达到共享理解。用户确认前只停留在方案阶段；用户确认后再交给对应的计划、建模或实施流程。
 
-The session is done when the frontier is empty: every branch of the design tree visited, nothing left silently assumed. Do not act on it until the user confirms you have reached a shared understanding.
+## 约束
+
+- 不替用户决定业务优先级、兼容性取舍、数据边界或不可逆操作。
+- 不用“应该可以”“后续再看”等模糊语句掩盖未决节点。
+- 不把技术建议写成已经落地的事实。
+- 需要正式书面计划时，遵守当前项目 `.agents/plan/` 的方案先行约定；计划获批准前不实施。
+- 需要术语或不可逆决策落盘时，转入 `grill-with-docs` 的文档化流程。
+
+## 完成标准
+
+设计树的所有分支都已访问；没有未声明的假设、未回答的前置决策或等待用户拍板的隐含选择；用户已确认共享理解，或明确选择暂停在当前阶段。
