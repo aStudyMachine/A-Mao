@@ -1,0 +1,54 @@
+# A-Mao 开发中间件（在 WSL 中启动：docker compose up -d）
+# 端口/账号与各模块 application.yaml 保持一致，业务代码无需任何改动
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: amao-mysql
+    restart: unless-stopped
+    ports:
+      - "13306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: a-mao
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql-data:/var/lib/mysql
+      # 首次初始化数据卷时自动执行建表脚本
+      - ../doc/DDL.sql:/docker-entrypoint-initdb.d/01-DDL.sql:ro
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p123456" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    networks:
+      - amao-net
+
+  redis:
+    image: redis:7.4
+    container_name: amao-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command:
+      - --appendonly
+      - "yes"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - amao-net
+
+volumes:
+  mysql-data:
+  redis-data:
+
+networks:
+  amao-net:
+    driver: bridge
