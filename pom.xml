@@ -110,6 +110,16 @@
                <artifactId>mapstruct</artifactId>
                <version>${mapstruct.version}</version>
            </dependency>
+           <dependency>
+               <groupId>org.mapstruct</groupId>
+               <artifactId>mapstruct-processor</artifactId>
+               <version>${mapstruct.version}</version>
+           </dependency>
+           <dependency>
+               <groupId>org.projectlombok</groupId>
+               <artifactId>lombok-mapstruct-binding</artifactId>
+               <version>${lombok-mapstruct-binding.version}</version>
+           </dependency>
 
            <dependency>
                <groupId>com.baomidou</groupId>
