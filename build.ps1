@@ -38,7 +38,7 @@ $Root = $PSScriptRoot
 $Builds = @(
     @{
         Name = "backend"
-        Command = "mvn -pl amao-boot/amao-boot-example -am package"
+        Command = ".\mvnw.cmd -pl amao-boot/amao-boot-example -am package"
         OutputDir = "amao-boot/amao-boot-example/target"
         SizeLimitMB = 100
     }

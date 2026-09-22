@@ -48,7 +48,7 @@ $Units = @(
         ExpectedVersion = "25"
         EnvDir = ""
         LockFile = "pom.xml"
-        StartCommand = "mvn -pl amao-boot/amao-boot-example -am spring-boot:run"
+        StartCommand = ".\mvnw.cmd -pl amao-boot/amao-boot-example -am spring-boot:run"
     }
 )
 
@@ -94,8 +94,9 @@ function Test-EnvReady {
 function Ensure-Env {
     param([string]$UnitName, [string]$LockFile)
     # Maven 后端无项目内依赖目录可清空重建；就绪重建 = 强制刷新解析锁定依赖。
-    Write-Host "==> [$UnitName] 环境不就绪，重建（mvn -U dependency:resolve）..." -ForegroundColor Cyan
-    Invoke-Expression "mvn -f `"$(Join-Path $Root $LockFile)`" -U dependency:resolve"
+    # 统一走仓库自带 mvnw.cmd（Maven Wrapper），设备无需安装 Maven。
+    Write-Host "==> [$UnitName] 环境不就绪，重建（mvnw -U dependency:resolve）..." -ForegroundColor Cyan
+    Invoke-Expression "& '$Root\mvnw.cmd' -f `"$(Join-Path $Root $LockFile)`" -U dependency:resolve"
     if ($LASTEXITCODE -ne 0) {
         throw "[$UnitName] 依赖重建失败：mvn -U dependency:resolve 退出码 $LASTEXITCODE"
     }
