@@ -16,7 +16,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
       # 首次初始化数据卷时自动执行建表脚本
-      - ../doc/DDL.sql:/docker-entrypoint-initdb.d/01-DDL.sql:ro
+      - ../sql/DDL.sql:/docker-entrypoint-initdb.d/01-DDL.sql:ro
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p123456" ]
       interval: 10s

@@ -28,7 +28,7 @@ _Avoid_: ticket、JWT 会话（本期非 JWT）、menu code（菜单树本期不
 ### BaseModel 审计字段
 
 **BaseModel audit fields**:
-`amao-common-datasource` 的 `BaseModel` 定义的 7 个公共字段（id、create_time、update_time、create_by、creator_name、update_by、updater_name、trace_id），与 `doc/DDL.sql` 公共字段段一一对应。所有业务表实体继承 BaseModel；建表 DDL 必须包含公共字段段。
+`amao-common-datasource` 的 `BaseModel` 定义的 7 个公共字段（id、create_time、update_time、create_by、creator_name、update_by、updater_name、trace_id），与 `sql/DDL.sql` 公共字段段一一对应。所有业务表实体继承 BaseModel；建表 DDL 必须包含公共字段段。
 _Avoid_: 公共字段、基础字段（无法区分是 BaseModel 契约还是随口一提的字段）
 
 ### Result 统一响应

@@ -23,6 +23,7 @@
 | 术语 / 决策记录 | `CONTEXT.md`、`docs/adr/` |
 | 版本历史 / 待办 | `docs/版本更新记录.md`（历史归档，日常开发无需阅读）；`TODO.md`（完成即删，发布与对话收尾主动核对） |
 | 域机制事实 | `docs/域机制.md`（领域机制的唯一权威，按业务域分小节） |
+| 建表 DDL / 种子数据 | `sql/`（`DDL.sql`、`init-data.sql`；可执行脚本，非规范正文） |
 | 特性级 issue 跟踪 | `.scratch/<feature>/`（约定见 `docs/agents/issue-tracker.md`） |
 
 ## 三、最高红线（正文见指针文档，违反即返工）
