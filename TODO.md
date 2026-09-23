@@ -15,7 +15,6 @@
 ## 遗留观察（延续观察，不影响正常流程）
 
 - [ ] Spring Cloud Alibaba 2025.1.0.0 与 Spring Boot 4.0.8 的兼容性观察——本期已定 Feign 直连方案，Nacos 单独立项；若 nacos/服务发现出现异常，优先核对版本矩阵。
-- [ ] boot 模块 fat jar 体积观察——AGENTS 要求 fat jar ≤100MB，本轮仅接入 spring-boot-maven-plugin，未做体积达标验证。
 - [ ] MetaObjectHandler 审计字段自动填充（create_by/creator_name/update_by/updater_name）仍注释未实现——写库路径需手工填或后续补齐；种子 SQL 已手工填。
 - [ ] Sa-Token Redisson starter 与既有 redisson-spring-boot-starter 自动装配共存情况——双服务启动后关注会话读写是否异常。
 

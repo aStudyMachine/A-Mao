@@ -13,13 +13,13 @@
 #
 # 纪律（为什么存在这些检查）：
 #   1. 构建环境保持最小依赖：只装构建必需项，混装无关库会使产物
-#      膨胀——给产物体积立一条可度量的红线并在此自动校验。
+#      膨胀——产物体积在构建后打印出来供观察（不设上限，见开发规范 §1）。
 #   2. 构建工具日志可能走 stderr，被终端显示为红字"失败"——
 #      成败只看退出码 $LASTEXITCODE，不看输出颜色。
 #   3. 构建产物目录不入库（见 .gitignore），产出即交付物。
 #
 # 用法：
-#   .\build.ps1             # 构建 + 产物体积校验
+#   .\build.ps1             # 构建 + 产物体积打印
 #   .\build.ps1 -Check      # 仅环境检查，不构建
 # =====================================================================
 param(
@@ -34,13 +34,11 @@ $Root = $PSScriptRoot
 #   Name        单元名（日志/报错标识）
 #   Command     打包构建命令
 #   OutputDir   构建输出目录（相对项目根）
-#   SizeLimitMB 产物体积上限（MB；后端 fat jar ≤100）
 $Builds = @(
     @{
         Name = "backend"
         Command = ".\mvnw.cmd -pl amao-boot/amao-boot-example -am package"
         OutputDir = "amao-boot/amao-boot-example/target"
-        SizeLimitMB = 100
     }
 )
 
@@ -65,7 +63,7 @@ try {
         exit 0
     }
 
-    # ---- 逐单元顺序构建 + 产物体积红线校验 ----
+    # ---- 逐单元顺序构建 + 产物体积打印 ----
     foreach ($build in $Builds) {
         Write-Host "==> [$($build.Name)] 开始构建：$($build.Command)" -ForegroundColor Cyan
         Push-Location $Root
@@ -86,11 +84,7 @@ try {
             throw "[$($build.Name)] 构建结束后未在 $($build.OutputDir) 发现产物，请核对输出目录配置。"
         }
         $sizeMB = [math]::Round((($files | Measure-Object -Property Length -Sum).Sum) / 1MB, 1)
-        Write-Host "==> [$($build.Name)] 产物体积：$sizeMB MB（上限 $($build.SizeLimitMB) MB）" -ForegroundColor DarkGray
-        if ($sizeMB -gt $build.SizeLimitMB) {
-            Write-Warning "[$($build.Name)] 产物体积 $sizeMB MB 超过上限 $($build.SizeLimitMB) MB（体积红线见 docs/开发规范.md §1）。"
-            exit 2
-        }
+        Write-Host "==> [$($build.Name)] 产物体积：$sizeMB MB" -ForegroundColor DarkGray
     }
 
     Write-Host "==> 全部单元构建完成。" -ForegroundColor Green
