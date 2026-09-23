@@ -6,7 +6,7 @@
 
 **A-Mao**：基于 JDK 25 + Spring Boot 4 的 Java 后端微服务脚手架（Vue 前端规划中）。
 
-- **技术栈**：后端 JDK 25、Spring Boot 4.0.8、Spring Cloud 2025.1.0、Spring Cloud Alibaba 2025.1.0.0、MyBatis-Plus 3.5.17、Redisson 4.7.0、Hutool 5.8.27，Maven 多模块单仓；前端规划 Vue 3 + Vite
+- **技术栈**：后端 JDK 25、Spring Boot 4.0.8、Spring Cloud 2025.1.0、Spring Cloud Alibaba 2025.1.0.0、MyBatis-Plus 3.5.17、Redisson 4.7.0、Hutool 5.8.47，Maven 多模块单仓；前端规划 Vue 3 + Vite
 - **核心理念**：共性下沉 amao-common（统一响应 Result、BaseModel 审计字段、全局异常、链路日志），业务模块只写业务；`*-api` 子模块承载跨模块 RPC DTO 契约；配置与接口契约只增不减
 - **构建/交付限制**：后端 fat jar ≤100MB（见开发规范 §1）
 

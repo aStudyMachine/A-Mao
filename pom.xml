@@ -16,7 +16,7 @@
         <!--依赖组件版本号-->
 
         <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
-        <hutool-all.version>5.8.27</hutool-all.version>
+        <hutool-all.version>5.8.47</hutool-all.version>
 
         <!--spring boot-->
         <spring-boot.version>4.0.8</spring-boot.version>
