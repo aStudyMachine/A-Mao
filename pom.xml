@@ -16,7 +16,7 @@
         <!--依赖组件版本号-->
 
         <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
-        <hutool-all.version>5.8.47</hutool-all.version>
+        <hutool-all.version>7.0.0-M7</hutool-all.version>
 
         <!--spring boot-->
         <spring-boot.version>4.0.8</spring-boot.version>
@@ -221,7 +221,7 @@
 
         <!--全局引入的两个组件库 lombok , hutool-->
         <dependency>
-            <groupId>cn.hutool</groupId>
+            <groupId>cn.hutool.v7</groupId>
             <artifactId>hutool-all</artifactId>
             <version>${hutool-all.version}</version>
         </dependency>

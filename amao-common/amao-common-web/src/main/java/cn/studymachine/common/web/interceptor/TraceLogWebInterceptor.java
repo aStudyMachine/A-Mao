@@ -1,7 +1,7 @@
 package cn.studymachine.common.web.interceptor;
 
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.v7.core.data.id.IdUtil;
+import cn.hutool.v7.core.text.StrUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;

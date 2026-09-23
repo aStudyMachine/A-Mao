@@ -1,6 +1,6 @@
 package cn.studymachine.common.web.config;
 
-import cn.hutool.core.exceptions.ExceptionUtil;
+import cn.hutool.v7.core.exception.ExceptionUtil;
 import cn.studymachine.common.web.Result;
 import cn.studymachine.common.web.ResultCode;
 import cn.studymachine.common.web.exception.BizException;

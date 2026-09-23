@@ -1,8 +1,8 @@
 package cn.studymachine.common.json.deserial;
 
 
-import cn.hutool.core.date.DateTime;
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.v7.core.date.DateTime;
+import cn.hutool.v7.core.text.StrUtil;
 import tools.jackson.core.JsonParser;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ValueDeserializer;

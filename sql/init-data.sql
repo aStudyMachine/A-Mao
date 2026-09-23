@@ -1,6 +1,6 @@
 -- Sa-Token RBAC 种子数据（与 sql/DDL.sql 修订版配套）
 -- 执行库：127.0.0.1:13306/a-mao
--- admin 密码明文：123456（BCrypt 哈希由 cn.hutool.crypto.digest.BCrypt.hashpw 生成）
+-- admin 密码明文：123456（BCrypt 哈希由 cn.hutool.v7.crypto.digest.BCrypt.hashpw 生成）
 -- 审计字段本期由种子 SQL 手工填（MetaObjectHandler 自动填充尚未覆盖 create_by 等）
 
 SET NAMES utf8mb4;

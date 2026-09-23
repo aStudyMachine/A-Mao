@@ -1,6 +1,6 @@
 package cn.studymachine.common.redis.handler;
 
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.v7.core.text.StrUtil;
 import org.redisson.config.NameMapper;
 
 /**

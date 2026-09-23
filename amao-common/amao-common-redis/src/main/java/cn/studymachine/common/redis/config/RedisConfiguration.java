@@ -1,6 +1,6 @@
 package cn.studymachine.common.redis.config;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.v7.core.util.ObjUtil;
 import cn.studymachine.common.redis.config.properties.RedissonProperties;
 import cn.studymachine.common.redis.handler.KeyPrefixHandler;
 import cn.studymachine.common.redis.manager.PlusSpringCacheManager;
@@ -80,7 +80,7 @@ public class RedisConfiguration {
                     .setCodec(codec);
 
             RedissonProperties.SingleServerConfig singleServerConfig = redissonProperties.getSingleServerConfig();
-            if (ObjectUtil.isNotNull(singleServerConfig)) {
+            if (ObjUtil.isNotNull(singleServerConfig)) {
                 // 使用单机模式
                 config.useSingleServer()
                         //设置redis key前缀
@@ -94,7 +94,7 @@ public class RedisConfiguration {
             }
             // 集群配置方式 参考下方注释
             RedissonProperties.ClusterServersConfig clusterServersConfig = redissonProperties.getClusterServersConfig();
-            if (ObjectUtil.isNotNull(clusterServersConfig)) {
+            if (ObjUtil.isNotNull(clusterServersConfig)) {
                 config.useClusterServers()
                         //设置redis key前缀
 

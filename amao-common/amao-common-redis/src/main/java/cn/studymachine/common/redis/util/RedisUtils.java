@@ -1,6 +1,6 @@
 package cn.studymachine.common.redis.util;
 
-import cn.hutool.extra.spring.SpringUtil;
+import cn.hutool.v7.extra.spring.SpringUtil;
 import lombok.experimental.UtilityClass;
 import org.redisson.api.*;
 

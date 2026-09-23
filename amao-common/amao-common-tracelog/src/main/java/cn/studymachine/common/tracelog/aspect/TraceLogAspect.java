@@ -1,6 +1,6 @@
 package cn.studymachine.common.tracelog.aspect;
 
-import cn.hutool.core.util.IdUtil;
+import cn.hutool.v7.core.data.id.IdUtil;
 import cn.studymachine.common.tracelog.annotation.TraceLog;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

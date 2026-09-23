@@ -1,6 +1,6 @@
 package cn.studymachine.user.service;
 
-import cn.hutool.crypto.digest.BCrypt;
+import cn.hutool.v7.crypto.digest.BCrypt;
 import cn.studymachine.common.web.exception.BizException;
 import cn.studymachine.user.api.dto.LoginReqDTO;
 import cn.studymachine.user.api.dto.LoginRespDTO;

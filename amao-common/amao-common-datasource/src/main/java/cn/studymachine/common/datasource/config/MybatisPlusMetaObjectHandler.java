@@ -1,6 +1,6 @@
 package cn.studymachine.common.datasource.config;
 
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.v7.core.text.StrUtil;
 import cn.studymachine.common.datasource.bean.BaseModel;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import lombok.extern.slf4j.Slf4j;

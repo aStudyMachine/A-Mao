@@ -1,10 +1,10 @@
 package cn.studymachine.common.json.util;
 
-import cn.hutool.core.lang.Dict;
-import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.spring.SpringUtil;
+import cn.hutool.v7.core.array.ArrayUtil;
+import cn.hutool.v7.core.map.Dict;
+import cn.hutool.v7.core.text.StrUtil;
+import cn.hutool.v7.core.util.ObjUtil;
+import cn.hutool.v7.extra.spring.SpringUtil;
 import lombok.experimental.UtilityClass;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
@@ -32,7 +32,7 @@ public class JsonUtils {
     }
 
     public static String toJsonString(Object object) {
-        if (ObjectUtil.isNull(object)) {
+        if (ObjUtil.isNull(object)) {
             return null;
         }
         try {

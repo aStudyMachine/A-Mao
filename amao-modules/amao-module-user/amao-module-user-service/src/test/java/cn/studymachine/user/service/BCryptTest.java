@@ -1,6 +1,6 @@
 package cn.studymachine.user.service;
 
-import cn.hutool.crypto.digest.BCrypt;
+import cn.hutool.v7.crypto.digest.BCrypt;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
