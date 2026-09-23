@@ -38,6 +38,7 @@
 8. **禁止 master 直改**：代码与文档改动一律新开分支（命名/生命周期见开发规范 §7）；合并后分支**删除权归作者**，Agent 不自动删。
 9. **域特有红线**：
    - 接口统一返回 `Result<T>`（amao-common-web），禁止裸 Map/裸实体出 Controller 层 → `docs/配置与接口参考.md`；
+   - 接口统一 `POST` + 动词开头 camelCase 路径、入参走请求体，禁止纯名词路径与 `GET`/`PUT`/`DELETE`/`PATCH` → `docs/架构规范与红线.md` §6；
    - 跨模块共性判定/工具一律收编 amao-common 对应 starter，业务模块禁止私有实现 → `docs/架构规范与红线.md` §4.1。
 
 ## 四、跨 Agent Skills 共享机制

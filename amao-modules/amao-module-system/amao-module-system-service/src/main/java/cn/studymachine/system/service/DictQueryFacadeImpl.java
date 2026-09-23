@@ -24,7 +24,7 @@ public class DictQueryFacadeImpl implements DictQueryFacade {
     private final DictValueConverter dictValueConverter;
 
     @Override
-    public List<DictValueDTO> listByDictKey(String dictKey) {
+    public List<DictValueDTO> listDictValues(String dictKey) {
         if (dictKey == null || dictKey.isBlank()) {
             return Collections.emptyList();
         }

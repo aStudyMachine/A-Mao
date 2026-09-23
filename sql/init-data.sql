@@ -15,7 +15,7 @@ DELETE FROM t_sys_user WHERE id = 1;
 DELETE FROM t_sys_dict_value WHERE dict_key = 'demo_status';
 DELETE FROM t_sys_dict_key WHERE dict_key = 'demo_status';
 
--- admin 用户（显式 id=1，验证脚本可写死 /perm/1）
+-- admin 用户（显式 id=1，验证脚本可写死 userId=1）
 INSERT INTO t_sys_user (id, username, password, real_name, phone, email, status, deleted,
                         create_time, update_time, create_by, creator_name, update_by, updater_name, trace_id)
 VALUES (1, 'admin', '$2a$10$XVRlw.SKKryCFwX.2r3K5OGR9VxuYyR0/oSEEKDMSVRqYZs5AIWLO',
@@ -43,7 +43,7 @@ INSERT INTO t_sys_role_permission (role_id, permission, status,
 VALUES (1, 'sys:dict:list', 1, NOW(), NOW(), 1, 'system', 1, 'system', 'seed-init-data'),
        (1, 'auth:user:info', 1, NOW(), NOW(), 1, 'system', 1, 'system', 'seed-init-data');
 
--- 字典演示数据（闭环脚本 GET /api/dict/demo_status）
+-- 字典演示数据（闭环脚本 POST /api/dict/listDictValues，body {"dictKey":"demo_status"}）
 INSERT INTO t_sys_dict_key (dict_key, dict_name, status,
                             create_time, update_time, create_by, creator_name, update_by, updater_name, trace_id)
 VALUES ('demo_status', '演示状态', 1, NOW(), NOW(), 1, 'system', 1, 'system', 'seed-init-data');

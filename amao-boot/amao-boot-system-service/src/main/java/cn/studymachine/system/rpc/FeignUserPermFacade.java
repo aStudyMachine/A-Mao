@@ -3,6 +3,7 @@ package cn.studymachine.system.rpc;
 import cn.studymachine.common.web.Result;
 import cn.studymachine.common.web.exception.BizException;
 import cn.studymachine.user.api.UserPermFacade;
+import cn.studymachine.user.api.dto.GetUserPermReqDTO;
 import cn.studymachine.user.api.dto.UserPermDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,7 @@ import java.util.Collections;
 /**
  * {@link UserPermFacade} 的 Feign 远程适配器（放 boot 装配层，不进业务包）。
  *
- * <p>HTTP 契约：{@code GET /api/rpc/user/perm/{userId}} → {@code Result<UserPermDTO>}。
+ * <p>HTTP 契约：{@code POST /api/rpc/user/getUserPerm} → {@code Result<UserPermDTO>}。
  * 远程失败或 Result 非 0 时返回空权限（不抛错），由调用方鉴权拒绝。</p>
  */
 @Slf4j
@@ -30,7 +31,9 @@ public class FeignUserPermFacade implements UserPermFacade {
             return empty(userId);
         }
         try {
-            Result<UserPermDTO> result = sysUserPermClient.getUserPerm(userId);
+            GetUserPermReqDTO req = new GetUserPermReqDTO();
+            req.setUserId(userId);
+            Result<UserPermDTO> result = sysUserPermClient.getUserPerm(req);
             if (result == null || result.getCode() == null || result.getCode() != 0 || result.getData() == null) {
                 log.warn("用户权限RPC未命中: userId={} code={}", userId, result == null ? null : result.getCode());
                 return empty(userId);

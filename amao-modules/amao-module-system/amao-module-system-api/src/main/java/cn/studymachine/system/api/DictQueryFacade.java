@@ -22,5 +22,5 @@ public interface DictQueryFacade {
      * @param dictKey 字典键（t_sys_dict_key.dict_key），不得为 {@code null}
      * @return 字典值列表；无数据时返回空列表，不返回 {@code null}
      */
-    List<DictValueDTO> listByDictKey(String dictKey);
+    List<DictValueDTO> listDictValues(String dictKey);
 }

@@ -65,11 +65,11 @@ public class AuthService {
     }
 
     /**
-     * 当前登录用户摘要（自检用）。
+     * 查询当前登录用户摘要（自检用）。
      *
      * @return 用户信息；未登录由拦截器拦截，此处假定已登录
      */
-    public UserInfoDTO currentUser() {
+    public UserInfoDTO getCurrentUser() {
         Object loginId = StpUtil.getLoginId();
         Long userId = Long.valueOf(String.valueOf(loginId));
         SysUserModel user = sysUserMapper.selectById(userId);

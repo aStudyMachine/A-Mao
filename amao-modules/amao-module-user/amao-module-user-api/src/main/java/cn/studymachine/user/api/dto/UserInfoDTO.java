@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 当前登录用户摘要（user-info 自检接口）。
+ * 当前登录用户摘要（getUserInfo 自检接口）。
  *
  * <p>禁止携带密码字段。</p>
  */
