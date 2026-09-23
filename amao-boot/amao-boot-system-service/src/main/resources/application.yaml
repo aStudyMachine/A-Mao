@@ -1,71 +1,101 @@
+# ========== 服务基础 ==========
 server:
+  # HTTP 监听端口（system-service 对外 9100）
   port: 9100
 
 spring:
   application:
+    # 应用名：Feign 目标、Redisson clientName、日志标识
     name: system-service
   config:
+    # 可选拉取 Nacos 共享配置；Nacos 不可用时不阻断启动（本期未接注册中心）
     import: "optional:nacos:system-service.yaml"
   mvc:
     format:
+      # 全局日期时间序列化格式（Controller 出入参）
       date-time: yyyy-MM-dd HH:mm:ss
+
+  # ========== 数据源（dynamic-datasource 多数据源） ==========
   datasource:
-    dynamic: # 多数据源配置
+    dynamic:
+      # 默认数据源名（与下方 datasource.master 对应）
       primary: master
       datasource:
-        master: # 数据源名称定义
-          name: a-mao #数据库名称
+        master:
+          # 逻辑库名，会拼进 url 占位符
+          name: a-mao
+          # JDBC 连接串：关闭 SSL、时区上海、允许公钥取回（MySQL 8 鉴权）
           url: jdbc:mysql://127.0.0.1:13306/${spring.datasource.dynamic.datasource.master.name}?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          # MySQL 驱动类
           driver-class-name: com.mysql.cj.jdbc.Driver
+          # 数据库账号（本地开发；生产须外置密钥，禁止入库）
           username: root
+          # 数据库密码（本地开发；生产须外置密钥，禁止入库）
           password: 123456
+
+  # ========== Redis（Spring Data 连接信息；会话/缓存实际经 Redisson） ==========
   data:
     redis:
+      # Redis 主机
       host: 127.0.0.1
+      # Redis 端口
       port: 6379
+      # Redis DB 序号（须与 user-service 相同，才能互认登录会话）
       database: 0
+      # 命令/连接超时
       timeout: 10s
       ssl:
+        # 本地开发关闭 TLS
         enabled: false
 
-
-# redisson 配置
+# ========== Redisson（分布式锁/缓存/客户端定制） ==========
 redisson:
-  # redis key前缀
+  # Redis key 统一前缀（空 = 不加前缀；多服务共享会话时须一致）
   keyPrefix:
-  # 线程池数量
+  # 业务线程池大小
   threads: 4
-  # Netty线程池数量
+  # Netty IO 线程池大小
   nettyThreads: 8
-  # 单节点配置
+  # 单机模式连接参数
   singleServerConfig:
-    # 客户端名称
+    # 客户端名称（便于 Redis 侧 CLIENT LIST 排查）
     clientName: ${spring.application.name}
     # 最小空闲连接数
     connectionMinimumIdleSize: 8
-    # 连接池大小
+    # 连接池上限
     connectionPoolSize: 32
-    # 连接空闲超时，单位：毫秒
+    # 连接空闲回收阈值（毫秒）
     idleConnectionTimeout: 10000
-    # 命令等待超时，单位：毫秒
+    # 单条命令等待超时（毫秒）
     timeout: 3000
-    # 发布和订阅连接池大小
+    # 发布/订阅连接池大小
     subscriptionConnectionPoolSize: 50
 
-# Sa-Token（与 user-service 同参，Redis 共享会话）
+# ========== Sa-Token（须与 user-service 同参，Redis 共享会话） ==========
 sa-token:
+  # 令牌所在 Header 名
   token-name: Authorization
+  # Header 里令牌前缀（调用方传 Authorization: Bearer <token>）
   token-prefix: Bearer
+  # 不从 Cookie 读令牌
   is-read-cookie: false
+  # 从 Header 读令牌
   is-read-header: true
+  # 同一账号允许多处同时在线
   is-concurrent: true
+  # 多端登录不共享同一 token
   is-share: false
+  # 令牌生成风格：uuid
   token-style: uuid
+  # token 有效期（秒）= 7 天
   timeout: 604800
+  # 无操作活跃超时（秒）；-1 表示关闭
   active-timeout: -1
+  # 关闭 Sa-Token 内部日志
   is-log: false
 
-# 跨服务 RPC 直连（无注册中心）
+# ========== 跨服务 RPC（Feign 直连，无注册中心） ==========
 rpc:
   user-service:
+    # user-service 权限 RPC 基址（SysUserPermClient.url）
     url: http://127.0.0.1:9101
