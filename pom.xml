@@ -16,6 +16,9 @@
         <!--依赖组件版本号-->
 
         <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
+        <!-- spring-boot-dependencies 的 pluginManagement 不随 import 生效，插件版本需自行声明；此处与 4.0.8 管理的版本对齐 -->
+        <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
+        <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
         <hutool-all.version>7.0.0-M7</hutool-all.version>
 
         <!--spring boot-->
@@ -211,6 +214,21 @@
                         <!-- JDK 23+ 默认禁用隐式注解处理, 显式开启以支持 lombok -->
                         <proc>full</proc>
                     </configuration>
+                </plugin>
+
+                <!-- Mockito 的 javaagent 配置写在含 Mockito 测试的模块里（见各 *-service 模块）：
+                     pluginManagement 的配置会泄漏到所有模块（含无 mockito 依赖者），
+                     属性 ${org.mockito:mockito-core:jar} 解析不到时会以字面量启动而崩 VM。
+                     此处只统一管理插件版本。 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${maven-dependency-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

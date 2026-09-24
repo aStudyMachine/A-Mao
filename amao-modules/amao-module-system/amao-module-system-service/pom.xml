@@ -72,5 +72,32 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <!-- Mockito 5.x 默认使用 inline mock maker；JDK 21+（JEP 451）禁止库自行动态挂载 agent，
+                 需把 mockito-core 显式作为 -javaagent 传给测试 JVM（Mockito 文档 §0.3 做法）。
+                 properties goal 把 jar 绝对路径写入 ${org.mockito:mockito-core:jar}，避免写死版本；
+                 版本由根 pom pluginManagement 统一管理。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>resolve-mockito-agent</id>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-javaagent:${org.mockito:mockito-core:jar}</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
