@@ -46,7 +46,9 @@ services:
       - amao-net
 
   # Nacos 3.1.1 单机（与 spring-cloud-alibaba 2025.1.0.0 的 nacos-client 3.1.1 对齐）
-  # 端口：8848 HTTP API（context /nacos）、9848 gRPC（=8848+1000）、8080 控制台
+  # 端口：18848 HTTP API（context /nacos）、19848 gRPC（=18848+1000）、8080 控制台
+  # 宿主端口避开 Hyper-V/WinNAT 保留区间（如 9779-9878 覆盖 9848，曾致 gRPC 不可达），
+  # 应用侧 server-addr 固定 127.0.0.1:18848（gRPC 端口 = server-addr 端口 + 1000）
   # 即使 NACOS_AUTH_ENABLE=false，镜像启动脚本仍强制要求 TOKEN/IDENTITY 三项（非空即可）
   # 开发默认关闭鉴权；生产必须开启鉴权并更换密钥
   nacos:
@@ -60,8 +62,8 @@ services:
       NACOS_AUTH_IDENTITY_KEY: nacos
       NACOS_AUTH_IDENTITY_VALUE: nacos
     ports:
-      - "8848:8848"
-      - "9848:9848"
+      - "18848:8848"
+      - "19848:9848"
       - "8080:8080"
     volumes:
       - nacos-data:/home/nacos/data
