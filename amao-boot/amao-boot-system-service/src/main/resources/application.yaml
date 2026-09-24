@@ -8,7 +8,7 @@ spring:
     # 应用名：Feign 目标、Redisson clientName、日志标识
     name: system-service
   config:
-    # 可选拉取 Nacos 共享配置；Nacos 不可用时不阻断启动（本期未接注册中心）
+    # 可选拉取 Nacos 共享配置；Nacos 不可用时不阻断启动（optional）
     import: "optional:nacos:system-service.yaml"
   mvc:
     format:
@@ -100,8 +100,4 @@ sa-token:
   # 关闭 Sa-Token 内部日志
   is-log: false
 
-# ========== 跨服务 RPC（Feign 直连，无注册中心） ==========
-rpc:
-  user-service:
-    # user-service 权限 RPC 基址（SysUserPermClient.url）
-    url: http://127.0.0.1:9101
+# ========== 跨服务 RPC（Feign 按服务名经 Nacos 注册发现寻址，无直连地址） ==========

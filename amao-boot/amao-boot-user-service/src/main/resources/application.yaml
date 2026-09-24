@@ -5,10 +5,10 @@ server:
 
 spring:
   application:
-    # 应用名：Feign 直连 name、Redisson clientName、日志标识共用
+    # 服务名：Nacos 注册名、Redisson clientName、日志标识共用
     name: user-service
   config:
-    # 可选拉取 Nacos 共享配置；Nacos 不可用时不阻断启动（本期未接注册中心）
+    # 可选拉取 Nacos 共享配置；Nacos 不可用时不阻断启动（optional）
     import: "optional:nacos:user-service.yaml"
   mvc:
     format:

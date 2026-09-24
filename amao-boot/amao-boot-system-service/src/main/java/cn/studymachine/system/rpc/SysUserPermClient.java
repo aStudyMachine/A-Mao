@@ -8,15 +8,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
- * user-service 权限 RPC HTTP 契约（Feign 直连，无注册中心）。
+ * user-service 权限 RPC HTTP 契约（Feign 按服务名经 Nacos 注册发现 + LoadBalancer 寻址）。
  *
  * <p>路径与 {@code SysUserRpcController} 对齐：完整路径含 /api 前缀。
  * 统一 POST，参数走请求体（架构规范 §6）。</p>
  */
 @FeignClient(
         name = "user-service",
-        path = "/api/rpc/user",
-        url = "${rpc.user-service.url:http://127.0.0.1:9101}")
+        path = "/api/rpc/user")
 public interface SysUserPermClient {
 
     /**

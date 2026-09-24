@@ -29,6 +29,12 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
 
+        <!--服务发现负载均衡（Feign 按服务名寻址经 Nacos 解析必需）-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+
         <!--nacos配置中心的依赖-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
