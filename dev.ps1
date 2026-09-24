@@ -8,6 +8,10 @@
 # 定位：环境准备与调试启动指令完全收敛至本脚本。禁止手动安装依赖到
 #       全局环境，禁止绕过本脚本直接启动。
 #
+# 启动模块：由 -Module 显式指定（仓库内相对路径），脚本不绑定任何具
+#       体模块——新增/删除启动模块无需改脚本；未指定或模块不存在即报
+#       错并列出 amao-boot 下的可用模块。
+#
 # 单元形态：当前仅 backend（Java 后端，Maven 多模块单仓）。前端
 #       Vue 3 工程建立后，在 $Units 数组追加 frontend 单元即可
 #       （工具链 node、环境 node_modules、启动 npm run dev）。
@@ -23,17 +27,48 @@
 #      mvn -U dependency:resolve，无需清空重建。
 #
 # 用法：
-#   .\dev.ps1                    # 环境检查 + 启动全部单元
-#   .\dev.ps1 -Check             # 仅做环境检查，不启动
-#   .\dev.ps1 -Unit backend      # 只启动指定单元（可多个：-Unit a,b）
+#   .\dev.ps1 -Module amao-boot/amao-boot-user-service                # 环境检查 + 启动该模块
+#   .\dev.ps1 -Module amao-boot/amao-boot-user-service -Check         # 仅做环境检查，不启动
+#   .\dev.ps1 -Module amao-boot/amao-boot-user-service -Unit backend  # 只启动指定单元（可多个：-Unit a,b）
+#
+#   -Module 必填：不传即报错并列出可用模块（本脚本不做任何模块的默认假设）。
 # =====================================================================
 param(
+    [string]$Module,
     [switch]$Check,
     [string[]]$Unit
 )
 
 $ErrorActionPreference = "Stop"
 $Root = $PSScriptRoot
+
+# ---- 模块解析（-Module 必填；脚本不绑定任何具体启动模块）----
+function Get-AvailableModules {
+    # 探测 amao-boot 下含 pom.xml 的子目录，仅用于报错时列出候选。
+    $bootDir = Join-Path $Root "amao-boot"
+    $mods = @()
+    if (Test-Path $bootDir) {
+        $mods = Get-ChildItem $bootDir -Directory |
+            Where-Object { Test-Path (Join-Path $_.FullName "pom.xml") } |
+            ForEach-Object { "amao-boot/$($_.Name)" }
+    }
+    if ($mods.Count -eq 0) { return "（未发现可用启动模块）" }
+    return ($mods -join '、')
+}
+
+function Resolve-Module {
+    param([string]$ModulePath)
+    # 前置校验：参数缺失或模块不存在一律快速失败（并给出候选），避免
+    # "环境检查通过、Maven 才报 reactor 找不到模块"的潜伏失败。
+    if ([string]::IsNullOrWhiteSpace($ModulePath)) {
+        throw "必须指定启动模块：-Module <模块路径>（仓库内相对路径，如 amao-boot/amao-boot-user-service）。可用模块：$(Get-AvailableModules)"
+    }
+    $modulePom = Join-Path (Join-Path $Root $ModulePath) "pom.xml"
+    if (-not (Test-Path $modulePom)) {
+        throw "启动模块不存在：$ModulePath（未找到 $modulePom）。可用模块：$(Get-AvailableModules)"
+    }
+    return $ModulePath
+}
 
 # ---- 单元配置（每栈一个单元；当前仅 backend）----
 # 字段说明：
@@ -42,7 +77,7 @@ $Root = $PSScriptRoot
 #   ExpectedVersion      期望主版本（用于回读复核）
 #   EnvDir               依赖环境目录（相对项目根；为空表示该单元无项目内依赖目录，跳过目录检查）
 #   LockFile             依赖锁定文件（相对项目根）
-#   StartCommand         源码调试启动命令
+#   CommandTemplate      源码调试启动命令模板（{module} 由 -Module 代入）
 $Units = @(
     @{
         Name = "backend"
@@ -50,7 +85,7 @@ $Units = @(
         ExpectedVersion = "25"
         EnvDir = ""
         LockFile = "pom.xml"
-        StartCommand = ".\mvnw.cmd -pl amao-boot/amao-boot-example -am spring-boot:run"
+        CommandTemplate = ".\mvnw.cmd -pl {module} -am spring-boot:run"
     }
 )
 
@@ -128,12 +163,17 @@ function Pause-IfInteractive {
 }
 
 try {
+    # ---- 阶段 0：-Module 前置校验（先于任何有副作用的动作）----
+    $Module = Resolve-Module -ModulePath $Module
+
     # ---- 阶段 1：逐单元解析工具链 + 环境就绪检查/重建 ----
-    foreach ($unit in $ActiveUnits) {
-        $tool = Resolve-Toolchain -Candidates $unit.ToolchainCandidates -ExpectedVersion $unit.ExpectedVersion -UnitName $unit.Name
-        Write-Host "==> [$($unit.Name)] 工具链：$tool" -ForegroundColor DarkGray
-        if (-not (Test-EnvReady -UnitName $unit.Name -EnvDir $unit.EnvDir -LockFile $unit.LockFile)) {
-            Ensure-Env -UnitName $unit.Name -LockFile $unit.LockFile
+    # 循环变量禁止命名 $unit：与脚本参数 $Unit 同名（PowerShell 变量名大小写
+    # 不敏感），会被参数的 [string[]] 类型约束强制转换，取不到哈希表字段。
+    foreach ($activeUnit in $ActiveUnits) {
+        $tool = Resolve-Toolchain -Candidates $activeUnit.ToolchainCandidates -ExpectedVersion $activeUnit.ExpectedVersion -UnitName $activeUnit.Name
+        Write-Host "==> [$($activeUnit.Name)] 工具链：$tool" -ForegroundColor DarkGray
+        if (-not (Test-EnvReady -UnitName $activeUnit.Name -EnvDir $activeUnit.EnvDir -LockFile $activeUnit.LockFile)) {
+            Ensure-Env -UnitName $activeUnit.Name -LockFile $activeUnit.LockFile
         }
     }
 
@@ -144,23 +184,24 @@ try {
 
     # ---- 阶段 2：逐单元并行启动调试进程；任一失败则停止全部已启动进程 ----
     $started = @()
-    foreach ($unit in $ActiveUnits) {
-        Write-Host "==> [$($unit.Name)] 启动源码调试：$($unit.StartCommand)" -ForegroundColor Cyan
+    foreach ($activeUnit in $ActiveUnits) {
+        $startCommand = $activeUnit.CommandTemplate.Replace("{module}", $Module)
+        Write-Host "==> [$($activeUnit.Name)] 启动源码调试（模块 $Module）：$startCommand" -ForegroundColor Cyan
         try {
-            $cmd = '"' + $unit.StartCommand + '"'
+            $cmd = '"' + $startCommand + '"'
             $proc = Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoExit", "-Command", $cmd) -WorkingDirectory $Root -PassThru
             $started += $proc
-            Write-Host "  [$($unit.Name)] 已启动，PID=$($proc.Id)" -ForegroundColor DarkGray
+            Write-Host "  [$($activeUnit.Name)] 已启动，PID=$($proc.Id)" -ForegroundColor DarkGray
         }
         catch {
             foreach ($p in $started) {
                 try { Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue } catch {}
             }
-            throw "[$($unit.Name)] 启动失败：$($unit.StartCommand)"
+            throw "[$($activeUnit.Name)] 启动失败：$startCommand"
         }
     }
 
-    Write-Host "==> 全部单元已启动。关闭对应调试窗口即停止；PID：$($started.Id -join ', ')" -ForegroundColor Green
+    Write-Host "==> 全部单元已启动（模块 $Module）。关闭对应调试窗口即停止；PID：$($started.Id -join ', ')" -ForegroundColor Green
     exit 0
 }
 catch {

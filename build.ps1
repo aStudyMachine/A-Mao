@@ -7,6 +7,10 @@
 #
 # 定位：构建指令完全收敛至本脚本。仅在用户明确要求打包/构建时执行。
 #
+# 构建模块：由 -Module 显式指定（仓库内相对路径），脚本不绑定任何具
+#       体模块——新增/删除启动模块无需改脚本；未指定或模块不存在即报
+#       错并列出 amao-boot 下的可用模块。
+#
 # 单元形态：当前仅 backend（Maven 多模块单仓）。前端 Vue 3 工程建立
 #       后，在 $Builds 数组追加 frontend 单元即可（npm run build、
 #       输出 dist、首屏 bundle 体积上限）。
@@ -19,26 +23,57 @@
 #   3. 构建产物目录不入库（见 .gitignore），产出即交付物。
 #
 # 用法：
-#   .\build.ps1             # 构建 + 产物体积打印
-#   .\build.ps1 -Check      # 仅环境检查，不构建
+#   .\build.ps1 -Module amao-boot/amao-boot-user-service    # 构建该模块 + 产物体积打印
+#   .\build.ps1 -Module amao-boot/amao-boot-user-service -Check  # 仅环境检查，不构建
+#
+#   -Module 必填：不传即报错并列出可用模块（本脚本不做任何模块的默认假设）。
 # =====================================================================
 param(
+    [string]$Module,
     [switch]$Check
 )
 
 $ErrorActionPreference = "Stop"
 $Root = $PSScriptRoot
 
+# ---- 模块解析（-Module 必填；脚本不绑定任何具体构建模块）----
+function Get-AvailableModules {
+    # 探测 amao-boot 下含 pom.xml 的子目录，仅用于报错时列出候选。
+    $bootDir = Join-Path $Root "amao-boot"
+    $mods = @()
+    if (Test-Path $bootDir) {
+        $mods = Get-ChildItem $bootDir -Directory |
+            Where-Object { Test-Path (Join-Path $_.FullName "pom.xml") } |
+            ForEach-Object { "amao-boot/$($_.Name)" }
+    }
+    if ($mods.Count -eq 0) { return "（未发现可用启动模块）" }
+    return ($mods -join '、')
+}
+
+function Resolve-Module {
+    param([string]$ModulePath)
+    # 前置校验：参数缺失或模块不存在一律快速失败（并给出候选），避免
+    # "环境检查通过、Maven 才报 reactor 找不到模块"的潜伏失败。
+    if ([string]::IsNullOrWhiteSpace($ModulePath)) {
+        throw "必须指定构建模块：-Module <模块路径>（仓库内相对路径，如 amao-boot/amao-boot-user-service）。可用模块：$(Get-AvailableModules)"
+    }
+    $modulePom = Join-Path (Join-Path $Root $ModulePath) "pom.xml"
+    if (-not (Test-Path $modulePom)) {
+        throw "构建模块不存在：$ModulePath（未找到 $modulePom）。可用模块：$(Get-AvailableModules)"
+    }
+    return $ModulePath
+}
+
 # ---- 单元配置（每栈一个构建单元；当前仅 backend）----
 # 字段说明：
-#   Name        单元名（日志/报错标识）
-#   Command     打包构建命令
-#   OutputDir   构建输出目录（相对项目根）
+#   Name               单元名（日志/报错标识）
+#   CommandTemplate    打包构建命令模板（{module} 由 -Module 代入）
+#   OutputDirTemplate  构建输出目录模板（{module} 由 -Module 代入）
 $Builds = @(
     @{
         Name = "backend"
-        Command = ".\mvnw.cmd -pl amao-boot/amao-boot-example -am package"
-        OutputDir = "amao-boot/amao-boot-example/target"
+        CommandTemplate = ".\mvnw.cmd -pl {module} -am package"
+        OutputDirTemplate = "{module}/target"
     }
 )
 
@@ -50,9 +85,12 @@ function Pause-IfInteractive {
 }
 
 try {
+    # ---- 阶段 0：-Module 前置校验（先于任何有副作用的动作）----
+    $Module = Resolve-Module -ModulePath $Module
+
     # ---- 逐单元创建输出目录 ----
     foreach ($build in $Builds) {
-        $outputPath = Join-Path $Root $build.OutputDir
+        $outputPath = Join-Path $Root $build.OutputDirTemplate.Replace("{module}", $Module)
         if (-not (Test-Path $outputPath)) {
             New-Item -ItemType Directory -Path $outputPath | Out-Null
         }
@@ -65,23 +103,25 @@ try {
 
     # ---- 逐单元顺序构建 + 产物体积打印 ----
     foreach ($build in $Builds) {
-        Write-Host "==> [$($build.Name)] 开始构建：$($build.Command)" -ForegroundColor Cyan
+        $command = $build.CommandTemplate.Replace("{module}", $Module)
+        $outputRel = $build.OutputDirTemplate.Replace("{module}", $Module)
+        Write-Host "==> [$($build.Name)] 开始构建（模块 $Module）：$command" -ForegroundColor Cyan
         Push-Location $Root
         try {
-            Invoke-Expression $build.Command
+            Invoke-Expression $command
             if ($LASTEXITCODE -ne 0) {
                 # 成败只看退出码；stderr 的红字不是判据。
-                throw "[$($build.Name)] 构建失败：$($build.Command) 退出码 $LASTEXITCODE"
+                throw "[$($build.Name)] 构建失败：$command 退出码 $LASTEXITCODE"
             }
         }
         finally {
             Pop-Location
         }
 
-        $outputPath = Join-Path $Root $build.OutputDir
+        $outputPath = Join-Path $Root $outputRel
         $files = Get-ChildItem $outputPath -Recurse -File
         if (-not $files) {
-            throw "[$($build.Name)] 构建结束后未在 $($build.OutputDir) 发现产物，请核对输出目录配置。"
+            throw "[$($build.Name)] 构建结束后未在 $outputRel 发现产物，请核对输出目录配置。"
         }
         $sizeMB = [math]::Round((($files | Measure-Object -Property Length -Sum).Sum) / 1MB, 1)
         Write-Host "==> [$($build.Name)] 产物体积：$sizeMB MB" -ForegroundColor DarkGray

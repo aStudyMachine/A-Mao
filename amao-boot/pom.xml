@@ -17,7 +17,6 @@
     </properties>
 
     <modules>
-        <module>amao-boot-example</module>
         <module>amao-boot-user-service</module>
         <module>amao-boot-system-service</module>
     </modules>
