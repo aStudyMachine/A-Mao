@@ -1,4 +1,4 @@
-﻿# =====================================================================
+# =====================================================================
 # dev.ps1 — 源码调试唯一入口（A-Mao 后端单元）
 #
 # 注意：本文件含中文注释，必须保存为 UTF-8 with BOM 编码——Windows
@@ -15,6 +15,13 @@
 # 单元形态：当前仅 backend（Java 后端，Maven 多模块单仓）。前端
 #       Vue 3 工程建立后，在 $Units 数组追加 frontend 单元即可
 #       （工具链 node、环境 node_modules、启动 npm run dev）。
+#
+# 启动形态：两段式——先「预备构建」把依赖链产物 install 进本地仓库
+#       （前台快速失败），再在调试窗口对单模块 spring-boot:run。
+#       不能用 `-pl <module> -am spring-boot:run` 一步到位：-am 会把根
+#       项目纳入 reactor，直接目标先在根项目执行 → Unable to find a
+#       suitable main class。test/prod 环境走 CI/CD（Linux），不在本
+#       脚本范围。
 #
 # 纪律（为什么存在这些检查）：
 #   1. 工具链必须解析到用户真实安装的持久版本，禁止使用 AI 沙箱/
@@ -77,7 +84,8 @@ function Resolve-Module {
 #   ExpectedVersion      期望主版本（用于回读复核）
 #   EnvDir               依赖环境目录（相对项目根；为空表示该单元无项目内依赖目录，跳过目录检查）
 #   LockFile             依赖锁定文件（相对项目根）
-#   CommandTemplate      源码调试启动命令模板（{module} 由 -Module 代入）
+#   PrepareTemplate      预备构建参数模板（{module} 由 -Module 代入；install 依赖链）
+#   RunTemplate          调试启动参数模板（{module} 由 -Module 代入；单模块 run）
 $Units = @(
     @{
         Name = "backend"
@@ -85,7 +93,10 @@ $Units = @(
         ExpectedVersion = "25"
         EnvDir = ""
         LockFile = "pom.xml"
-        CommandTemplate = ".\mvnw.cmd -pl {module} -am spring-boot:run"
+        # 预备构建：依赖链产物 install 进本地仓库（供单模块 run 解析兄弟模块 SNAPSHOT）
+        PrepareTemplate = "-pl {module} -am install -DskipTests"
+        # 调试启动：单模块 reactor，直接目标只命中本模块
+        RunTemplate = "-pl {module} spring-boot:run"
     }
 )
 
@@ -124,6 +135,20 @@ function Resolve-Toolchain {
     throw "[$UnitName] 未找到版本 $ExpectedVersion 的工具链，请先安装或补充 dev.ps1 中的候选列表。"
 }
 
+function Resolve-MvnSettingsArgs {
+    # mvnw 使用自带 Maven 分发版，不经过 MAVEN_HOME，默认只找用户级
+    # ~/.m2/settings.xml；缺失时会退回直连 central（无镜像/默认本地仓
+    # 库），国内网络下插件解析直接失败。检测到 MAVEN_HOME 下的全局
+    # settings 则显式 -s 复用，使 mvnw 与本机安装的 mvn 共用同一套配置。
+    if (-not $env:MAVEN_HOME) { return "" }
+    $settingsPath = Join-Path $env:MAVEN_HOME "conf\settings.xml"
+    if (-not (Test-Path $settingsPath)) { return "" }
+    Write-Host "  [backend] mvnw 复用 MAVEN_HOME settings：$settingsPath" -ForegroundColor DarkGray
+    # 路径用单引号：Start-Process 会把含空格的 -Command 值再包一层双引号，
+    # 内层双引号会提前闭合外层引号导致命令被截断（PS 5.1 经典坑）。
+    return "-s '$settingsPath'"
+}
+
 function Test-EnvReady {
     param([string]$UnitName, [string]$EnvDir, [string]$LockFile)
     # 就绪判据：EnvDir 非空时目录必须存在；锁定文件必须存在。
@@ -148,7 +173,7 @@ function Ensure-Env {
     # Maven 后端无项目内依赖目录可清空重建；就绪重建 = 强制刷新解析锁定依赖。
     # 统一走仓库自带 mvnw.cmd（Maven Wrapper），设备无需安装 Maven。
     Write-Host "==> [$UnitName] 环境不就绪，重建（mvnw -U dependency:resolve）..." -ForegroundColor Cyan
-    Invoke-Expression "& '$Root\mvnw.cmd' -f `"$(Join-Path $Root $LockFile)`" -U dependency:resolve"
+    Invoke-Expression "& '$Root\mvnw.cmd' $script:MvnSettingsArgs -f `"$(Join-Path $Root $LockFile)`" -U dependency:resolve"
     if ($LASTEXITCODE -ne 0) {
         throw "[$UnitName] 依赖重建失败：mvn -U dependency:resolve 退出码 $LASTEXITCODE"
     }
@@ -166,6 +191,9 @@ try {
     # ---- 阶段 0：-Module 前置校验（先于任何有副作用的动作）----
     $Module = Resolve-Module -ModulePath $Module
 
+    # ---- 阶段 0.5：探测 mvnw 是否需复用 MAVEN_HOME settings（-s）----
+    $script:MvnSettingsArgs = Resolve-MvnSettingsArgs
+
     # ---- 阶段 1：逐单元解析工具链 + 环境就绪检查/重建 ----
     # 循环变量禁止命名 $unit：与脚本参数 $Unit 同名（PowerShell 变量名大小写
     # 不敏感），会被参数的 [string[]] 类型约束强制转换，取不到哈希表字段。
@@ -182,13 +210,22 @@ try {
         exit 0
     }
 
-    # ---- 阶段 2：逐单元并行启动调试进程；任一失败则停止全部已启动进程 ----
+    # ---- 阶段 2：逐单元两段式启动；任一失败则停止全部已启动进程 ----
     $started = @()
     foreach ($activeUnit in $ActiveUnits) {
-        $startCommand = $activeUnit.CommandTemplate.Replace("{module}", $Module)
-        Write-Host "==> [$($activeUnit.Name)] 启动源码调试（模块 $Module）：$startCommand" -ForegroundColor Cyan
+        # ---- 阶段 2a：预备构建（前台快速失败）——依赖链产物 install 进本地仓库 ----
+        $prepareCommand = "& '$Root\mvnw.cmd' $script:MvnSettingsArgs $($activeUnit.PrepareTemplate.Replace('{module}', $Module))"
+        Write-Host "==> [$($activeUnit.Name)] 预备构建（模块 $Module）：$prepareCommand" -ForegroundColor Cyan
+        Invoke-Expression $prepareCommand
+        if ($LASTEXITCODE -ne 0) {
+            throw "[$($activeUnit.Name)] 预备构建失败（退出码 $LASTEXITCODE）：$prepareCommand"
+        }
+
+        # ---- 阶段 2b：调试窗口对单模块 spring-boot:run（日志与热停均在该窗口）----
+        $runCommand = "& '$Root\mvnw.cmd' $script:MvnSettingsArgs $($activeUnit.RunTemplate.Replace('{module}', $Module))"
+        Write-Host "==> [$($activeUnit.Name)] 启动源码调试（模块 $Module）：$runCommand" -ForegroundColor Cyan
         try {
-            $cmd = '"' + $startCommand + '"'
+            $cmd = '"' + $runCommand + '"'
             $proc = Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoExit", "-Command", $cmd) -WorkingDirectory $Root -PassThru
             $started += $proc
             Write-Host "  [$($activeUnit.Name)] 已启动，PID=$($proc.Id)" -ForegroundColor DarkGray
@@ -197,7 +234,7 @@ try {
             foreach ($p in $started) {
                 try { Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue } catch {}
             }
-            throw "[$($activeUnit.Name)] 启动失败：$startCommand"
+            throw "[$($activeUnit.Name)] 启动失败：$runCommand"
         }
     }
 
