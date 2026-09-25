@@ -202,13 +202,26 @@ try {
     Write-Host "    3) IDEA 同步  : Settings → Build Tools → Maven → User settings file 指向上面 settings；" -ForegroundColor DarkGray
     Write-Host "                    Local repository 留空（随 settings 的 localRepository 生效）" -ForegroundColor DarkGray
 
-    # 旧仓库搬迁提示：仅在 C 盘存在既有仓库且与本次配置不同时给出。
+    # 旧仓库处理提示：仅在 C 盘存在既有仓库、且与本次配置的仓库不同时给出。
+    # 提示按目标仓库「是否已有内容」分流——目标为空（新设备）适合整体搬走；
+    # 目标已是大仓库时再 /MOVE 只做无谓合并，故改为「先比对再决定删源」。
     if ($env:USERPROFILE) {
         $legacyRepo = Join-Path $env:USERPROFILE ".m2\repository"
-        if ((Test-Path -LiteralPath $legacyRepo) -and ($legacyRepo.TrimEnd('\') -ine $local.MavenRepoLocal.TrimEnd('\'))) {
+        $targetRepo = $local.MavenRepoLocal
+        if ((Test-Path -LiteralPath $legacyRepo) -and ($legacyRepo.TrimEnd('\') -ine $targetRepo.TrimEnd('\'))) {
+            $targetHasContent = @(Get-ChildItem -LiteralPath $targetRepo -Force -Directory -ErrorAction SilentlyContinue).Count -gt 0
             Write-Host ""
-            Write-Host "  检测到 C 盘既有仓库，可整体搬走以免重新下载：" -ForegroundColor DarkYellow
-            Write-Host "    robocopy `"$legacyRepo`" `"$($local.MavenRepoLocal)`" /MOVE /E" -ForegroundColor DarkYellow
+            if ($targetHasContent) {
+                Write-Host "  检测到 C 盘既有仓库，且配置的仓库已有内容：" -ForegroundColor DarkYellow
+                Write-Host "    C 盘：$legacyRepo" -ForegroundColor DarkYellow
+                Write-Host "    目标：$targetRepo" -ForegroundColor DarkYellow
+                Write-Host "  若目标仓库已含所需依赖，直接删除 C 盘那份即可（勿盲目 /MOVE 合并）：" -ForegroundColor DarkYellow
+                Write-Host "    Remove-Item `"$legacyRepo`" -Recurse -Force" -ForegroundColor DarkYellow
+                Write-Host "  不确定时先比对两边顶层目录：名称都出现在目标仓库才可删" -ForegroundColor DarkYellow
+            } else {
+                Write-Host "  检测到 C 盘既有仓库，目标仓库为空，可整体搬走以免重新下载：" -ForegroundColor DarkYellow
+                Write-Host "    robocopy `"$legacyRepo`" `"$targetRepo`" /MOVE /E" -ForegroundColor DarkYellow
+            }
         }
     }
 
