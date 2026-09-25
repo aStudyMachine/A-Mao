@@ -1,4 +1,4 @@
-# =====================================================================
+﻿# =====================================================================
 # dev.ps1 — 源码调试唯一入口（A-Mao 后端单元）
 #
 # 注意：本文件含中文注释，必须保存为 UTF-8 with BOM 编码——Windows
@@ -226,7 +226,7 @@ try {
         Write-Host "==> [$($activeUnit.Name)] 启动源码调试（模块 $Module）：$runCommand" -ForegroundColor Cyan
         try {
             $cmd = '"' + $runCommand + '"'
-            $proc = Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoExit", "-Command", $cmd) -WorkingDirectory $Root -PassThru
+            $proc = Start-Process -FilePath "pwsh.exe" -ArgumentList @("-NoExit", "-Command", $cmd) -WorkingDirectory $Root -PassThru
             $started += $proc
             Write-Host "  [$($activeUnit.Name)] 已启动，PID=$($proc.Id)" -ForegroundColor DarkGray
         }
