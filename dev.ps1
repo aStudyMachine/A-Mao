@@ -8,6 +8,12 @@
 # 定位：环境准备与调试启动指令完全收敛至本脚本。禁止手动安装依赖到
 #       全局环境，禁止绕过本脚本直接启动。
 #
+# 本机私有配置：项目根 .env（不入库，模板 .env.example）+ scripts\
+#       local-env.ps1 公共库（解析/注入/settings 优先级）。首次使用先跑
+#       .\init.ps1 生成 .env 与 settings.xml；未配置 .env 时本脚本回退
+#       PATH 工具链探测，行为与引入该机制之前一致。
+#       前置依赖：PowerShell 7（阶段 2b 调试窗口宿主）——缺失即快速失败。
+#
 # 启动模块：由 -Module 显式指定（仓库内相对路径），脚本不绑定任何具
 #       体模块——新增/删除启动模块无需改脚本；未指定或模块不存在即报
 #       错并列出 amao-boot 下的可用模块。
@@ -49,6 +55,20 @@ param(
 $ErrorActionPreference = "Stop"
 $Root = $PSScriptRoot
 
+# ---- 本机私有配置（.env）加载 ----
+# 先于单元配置执行：工具链候选与 settings 解析都依赖它。.env 缺失时不注入
+# 任何变量、也不报错，行为与引入本机制之前一致（未配置设备零改动可用）。
+. (Join-Path $Root "scripts\local-env.ps1")
+$script:LocalEnv = Import-LocalDevEnv -Root $Root
+
+# 工具链候选：.env 提供了 JDK_HOME 时只认它——显式声明即不接受 PATH 里的
+# 其他 JDK，避免多设备间版本漂移；未提供时回退 PATH 探测（与改造前一致）。
+if ($script:LocalEnv.JdkHome -ne '') {
+    $script:JavaCandidates = @((Join-Path $script:LocalEnv.JdkHome "bin\java.exe"))
+} else {
+    $script:JavaCandidates = @("java")
+}
+
 # ---- 模块解析（-Module 必填；脚本不绑定任何具体启动模块）----
 function Get-AvailableModules {
     # 探测 amao-boot 下含 pom.xml 的子目录，仅用于报错时列出候选。
@@ -80,7 +100,7 @@ function Resolve-Module {
 # ---- 单元配置（每栈一个单元；当前仅 backend）----
 # 字段说明：
 #   Name                 单元名（日志/报错标识，如 backend / frontend）
-#   ToolchainCandidates  工具链候选解析顺序（真实持久安装路径）
+#   ToolchainCandidates  工具链候选解析顺序（本机配置的 JDK_HOME 优先，否则 PATH 探测）
 #   ExpectedVersion      期望主版本（用于回读复核）
 #   EnvDir               依赖环境目录（相对项目根；为空表示该单元无项目内依赖目录，跳过目录检查）
 #   LockFile             依赖锁定文件（相对项目根）
@@ -89,7 +109,7 @@ function Resolve-Module {
 $Units = @(
     @{
         Name = "backend"
-        ToolchainCandidates = @("java")
+        ToolchainCandidates = $script:JavaCandidates
         ExpectedVersion = "25"
         EnvDir = ""
         LockFile = "pom.xml"
@@ -132,22 +152,12 @@ function Resolve-Toolchain {
             Write-Host "  [$UnitName] 候选 $($resolved.Source) 版本不符（期望 $ExpectedVersion），继续下一候选..." -ForegroundColor DarkYellow
         }
     }
-    throw "[$UnitName] 未找到版本 $ExpectedVersion 的工具链，请先安装或补充 dev.ps1 中的候选列表。"
+    throw "[$UnitName] 未找到版本 $ExpectedVersion 的工具链。候选：$($Candidates -join '、')。请核对 .env 的 JDK_HOME（或 PATH 中的 java）并安装 JDK $ExpectedVersion 后重试。"
 }
 
-function Resolve-MvnSettingsArgs {
-    # mvnw 使用自带 Maven 分发版，不经过 MAVEN_HOME，默认只找用户级
-    # ~/.m2/settings.xml；缺失时会退回直连 central（无镜像/默认本地仓
-    # 库），国内网络下插件解析直接失败。检测到 MAVEN_HOME 下的全局
-    # settings 则显式 -s 复用，使 mvnw 与本机安装的 mvn 共用同一套配置。
-    if (-not $env:MAVEN_HOME) { return "" }
-    $settingsPath = Join-Path $env:MAVEN_HOME "conf\settings.xml"
-    if (-not (Test-Path $settingsPath)) { return "" }
-    Write-Host "  [backend] mvnw 复用 MAVEN_HOME settings：$settingsPath" -ForegroundColor DarkGray
-    # 路径用单引号：Start-Process 会把含空格的 -Command 值再包一层双引号，
-    # 内层双引号会提前闭合外层引号导致命令被截断（PS 5.1 经典坑）。
-    return "-s '$settingsPath'"
-}
+# 注：settings.xml 的解析（-s 参数来源）已上移到 scripts\local-env.ps1 的
+# Get-MavenSettingsArgs，由 dev.ps1 / build.ps1 / init.ps1 共用同一套优先级，
+# 避免各入口各写一份而漂移（build.ps1 改造前就漏了 -s）。
 
 function Test-EnvReady {
     param([string]$UnitName, [string]$EnvDir, [string]$LockFile)
@@ -191,8 +201,22 @@ try {
     # ---- 阶段 0：-Module 前置校验（先于任何有副作用的动作）----
     $Module = Resolve-Module -ModulePath $Module
 
-    # ---- 阶段 0.5：探测 mvnw 是否需复用 MAVEN_HOME settings（-s）----
-    $script:MvnSettingsArgs = Resolve-MvnSettingsArgs
+    # ---- 阶段 0.5：解析 settings.xml 路径（-s）----
+    # 优先级见 scripts\local-env.ps1::Get-MavenSettingsArgs（显式指定 > init 生成
+    # > MAVEN_HOME\conf > 用户级 ~\.m2）。mvnw 不读 MAVEN_HOME\conf\settings.xml，
+    # 必须靠 -s 显式指定（踩坑记录 通-10）。
+    $script:MvnSettingsArgs = Get-MavenSettingsArgs -LocalEnv $script:LocalEnv -Root $Root
+    if ($script:MvnSettingsArgs -eq '') {
+        Write-Host "  提示：未找到 settings.xml，本次不带 -s（依赖落 Maven 默认仓库且无镜像加速）。" -ForegroundColor DarkYellow
+        Write-Host "        执行 .\init.ps1 可生成带 localRepository 与镜像的 settings。" -ForegroundColor DarkYellow
+    } else {
+        Write-Host "==> settings：$script:MvnSettingsArgs" -ForegroundColor DarkGray
+    }
+    if ($script:LocalEnv.EnvFileExists) {
+        Write-Host "==> 本机配置：$Root\.env" -ForegroundColor DarkGray
+    } else {
+        Write-Host "==> 未检测到 .env，回退 PATH 工具链探测；建议先执行 .\init.ps1 生成本机配置。" -ForegroundColor DarkYellow
+    }
 
     # ---- 阶段 1：逐单元解析工具链 + 环境就绪检查/重建 ----
     # 循环变量禁止命名 $unit：与脚本参数 $Unit 同名（PowerShell 变量名大小写
@@ -204,6 +228,15 @@ try {
             Ensure-Env -UnitName $activeUnit.Name -LockFile $activeUnit.LockFile
         }
     }
+
+    # ---- 阶段 1.5：调试窗口宿主（PowerShell 7）前置校验 ----
+    # 阶段 2b 的调试窗口固定用 pwsh 7 起（见 acdfe15）；缺失时若交给
+    # Start-Process，报错只会是笼统的「启动失败」，真因被埋掉，故前移。
+    $script:PwshPath = Test-Pwsh7
+    if (-not $script:PwshPath) {
+        throw "未检测到 PowerShell 7（pwsh.exe）：dev.ps1 的调试窗口依赖它。`n  安装：winget install --id Microsoft.PowerShell --source winget`n  安装后重开终端再执行（PATH 需刷新）。"
+    }
+    Write-Host "==> 调试窗口宿主：$script:PwshPath" -ForegroundColor DarkGray
 
     if ($Check) {
         Write-Host "==> 全部单元环境就绪。" -ForegroundColor Green
@@ -226,7 +259,8 @@ try {
         Write-Host "==> [$($activeUnit.Name)] 启动源码调试（模块 $Module）：$runCommand" -ForegroundColor Cyan
         try {
             $cmd = '"' + $runCommand + '"'
-            $proc = Start-Process -FilePath "pwsh.exe" -ArgumentList @("-NoExit", "-Command", $cmd) -WorkingDirectory $Root -PassThru
+            # 宿主用探测到的绝对路径（避免 PATH 差异导致命中不同版本）
+            $proc = Start-Process -FilePath $script:PwshPath -ArgumentList @("-NoExit", "-Command", $cmd) -WorkingDirectory $Root -PassThru
             $started += $proc
             Write-Host "  [$($activeUnit.Name)] 已启动，PID=$($proc.Id)" -ForegroundColor DarkGray
         }

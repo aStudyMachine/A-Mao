@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A-Mao Maven settings：由 init.ps1 依据项目根 .env 渲染生成（模板位于
+     scripts/settings.template.xml）。注意：已存在的文件不会被覆盖，调整
+     配置请修改 .env 并删除本文件后重跑 init.ps1。当 .env 的 MAVEN_MIRROR_URL
+     为空时，下方的镜像配置段（mirrors）不会出现在渲染产物中。 -->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0">
+  <!--依赖本地仓库落点：决定依赖下载到哪个盘（.env 的 MAVEN_REPO_LOCAL）-->
+  <localRepository>{{MAVEN_REPO_LOCAL}}</localRepository>
+  <!-- BEGIN-MIRRORS -->
+  <mirrors>
+    <mirror>
+      <id>amao-local-mirror</id>
+      <mirrorOf>central</mirrorOf>
+      <name>A-Mao local mirror</name>
+      <url>{{MAVEN_MIRROR_URL}}</url>
+    </mirror>
+  </mirrors>
+  <!-- END-MIRRORS -->
+</settings>

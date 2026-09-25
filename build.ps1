@@ -36,6 +36,13 @@ param(
 $ErrorActionPreference = "Stop"
 $Root = $PSScriptRoot
 
+# ---- 本机私有配置（.env）加载 ----
+# 与 dev.ps1 共用同一套解析逻辑（scripts\local-env.ps1）：本机 JDK 注入
+# JAVA_HOME、settings.xml 路径解析。改造前本脚本完全不带 -s，打包时依赖会
+# 落到 Maven 默认仓库（C 盘），故此处必须与 dev.ps1 同源。
+. (Join-Path $Root "scripts\local-env.ps1")
+$script:LocalEnv = Import-LocalDevEnv -Root $Root
+
 # ---- 模块解析（-Module 必填；脚本不绑定任何具体构建模块）----
 function Get-AvailableModules {
     # 探测 amao-boot 下含 pom.xml 的子目录，仅用于报错时列出候选。
@@ -67,12 +74,13 @@ function Resolve-Module {
 # ---- 单元配置（每栈一个构建单元；当前仅 backend）----
 # 字段说明：
 #   Name               单元名（日志/报错标识）
-#   CommandTemplate    打包构建命令模板（{module} 由 -Module 代入）
+#   CommandTemplate    打包构建命令模板（{module} 由 -Module 代入；
+#                      {settings} 由本机 settings.xml 解析结果代入）
 #   OutputDirTemplate  构建输出目录模板（{module} 由 -Module 代入）
 $Builds = @(
     @{
         Name = "backend"
-        CommandTemplate = ".\mvnw.cmd -pl {module} -am package"
+        CommandTemplate = ".\mvnw.cmd {settings} -pl {module} -am package"
         OutputDirTemplate = "{module}/target"
     }
 )
@@ -87,6 +95,25 @@ function Pause-IfInteractive {
 try {
     # ---- 阶段 0：-Module 前置校验（先于任何有副作用的动作）----
     $Module = Resolve-Module -ModulePath $Module
+
+    # ---- 阶段 0.5：本机私有配置校验 + settings 解析 ----
+    # JDK 判据与 dev.ps1 同源（scripts\local-env.ps1::Test-JdkVersion）：.env 显式
+    # 声明了 JDK_HOME 时就以它为准，不再接受 PATH 里的其他 JDK。
+    if ($script:LocalEnv.JdkHome -ne '') {
+        $javaExe = Join-Path $script:LocalEnv.JdkHome "bin\java.exe"
+        if (-not (Test-JdkVersion -JavaExe $javaExe -ExpectedVersion "25")) {
+            throw "JDK 校验失败：$javaExe 不存在或不是 25。请核对 .env 的 JDK_HOME（应填安装根目录）。"
+        }
+        Write-Host "==> JDK 校验通过：$javaExe" -ForegroundColor DarkGray
+    }
+
+    $script:MvnSettingsArgs = Get-MavenSettingsArgs -LocalEnv $script:LocalEnv -Root $Root
+    if ($script:MvnSettingsArgs -eq '') {
+        Write-Host "  提示：未找到 settings.xml，本次不带 -s（依赖落 Maven 默认仓库且无镜像加速）。" -ForegroundColor DarkYellow
+        Write-Host "        执行 .\init.ps1 可生成带 localRepository 与镜像的 settings。" -ForegroundColor DarkYellow
+    } else {
+        Write-Host "==> settings：$script:MvnSettingsArgs" -ForegroundColor DarkGray
+    }
 
     # ---- 逐单元创建输出目录 ----
     foreach ($build in $Builds) {
@@ -103,7 +130,7 @@ try {
 
     # ---- 逐单元顺序构建 + 产物体积打印 ----
     foreach ($build in $Builds) {
-        $command = $build.CommandTemplate.Replace("{module}", $Module)
+        $command = $build.CommandTemplate.Replace("{module}", $Module).Replace("{settings}", $script:MvnSettingsArgs)
         $outputRel = $build.OutputDirTemplate.Replace("{module}", $Module)
         Write-Host "==> [$($build.Name)] 开始构建（模块 $Module）：$command" -ForegroundColor Cyan
         Push-Location $Root
