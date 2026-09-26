@@ -141,18 +141,56 @@ function Get-MavenSettingsArgs {
 }
 
 function Test-Pwsh7 {
-    # 返回 pwsh.exe 的绝对路径；未找到返回 $null。
-    # 用途：dev.ps1 阶段 2b 的调试窗口固定用 PowerShell 7 起（与 mvnw.cmd
-    # 内部固定用 PS 5.1 是两件事）。缺失时必须由调用方给出安装指引，
-    # 否则 Start-Process 只会抛笼统的「启动失败」，真因被埋掉。
+    # 返回 pwsh.exe 的绝对路径；未找到或版本不是 7+ 返回 $null。
+    # 用途：Windows 下执行本项目 .ps1 脚本的**统一宿主**（见开发规范 §1 环境
+    # 纪律），以及 dev.ps1 阶段 2b 的调试窗口宿主。缺失/版本不符时必须由
+    # 调用方给出安装指引，否则 Start-Process 只会抛笼统的「启动失败」，真因
+    # 被埋掉。
+    #
+    # 「存在」不等于「可用」（本函数的核心判据）：
+    #   1. 只验路径存在会命中 0 字节的 App Execution Alias（商店版 PowerShell
+    #      未安装时 WindowsApps\pwsh.exe 就是这种占位符，执行后转发到
+    #      Windows PowerShell 5.1），属「探测通过、实际拿不到 7」的假阳性。
+    #   2. 商店版 PowerShell 安装在 C:\Program Files\WindowsApps\<包名>\，
+    #      是受保护目录，传统的 Program Files\PowerShell\7 探测看不见它；
+    #      故 Get-Command（走 PATH/别名）是第一优先，目录探测仅作兜底。
+    #   3. 版本必须**实际执行回读**，不能靠文件属性推断。
+    #
+    # 版本复核经实际执行 pwsh -Command 取 $PSVersionTable.PSVersion.Major，
+    # 与 Test-JdkVersion 的「回读复核」同源思路（环境就绪判据不能只看存在性）。
     $cmd = Get-Command "pwsh.exe" -ErrorAction SilentlyContinue
-    if ($cmd) { return $cmd.Source }
+    $candidates = @()
+    if ($cmd) { $candidates += $cmd.Source }
 
-    # PATH 未刷新时的兜底探测（PowerShell 7 的默认安装位置）。
+    # PATH 未刷新时的兜底探测。注意商店版落在 WindowsApps（受保护目录），
+    # 传统 Program Files\PowerShell\7 仅覆盖 MSI 安装形态，故两者都列。
     foreach ($path in @("$env:ProgramFiles\PowerShell\7\pwsh.exe", "$env:LOCALAPPDATA\Microsoft\WindowsApps\pwsh.exe")) {
-        if ($path -and (Test-Path -LiteralPath $path -PathType Leaf)) { return $path }
+        if ($path -and (Test-Path -LiteralPath $path -PathType Leaf)) { $candidates += $path }
+    }
+    # 去重（Get-Command 命中的往往就是 WindowsApps 那个）
+    $candidates = @($candidates | Select-Object -Unique)
+
+    foreach ($candidate in $candidates) {
+        $major = Get-PwshMajorVersion -PwshExe $candidate
+        if ($major -ge 7) { return $candidate }
     }
     return $null
+}
+
+function Get-PwshMajorVersion {
+    param([string]$PwshExe)
+
+    # 实际执行回读 PowerShell 主版本号；不可执行或非数字输出返回 -1。
+    # 经 cmd /c 合并 stderr，避免 $ErrorActionPreference='Stop' 下把 stderr
+    # 包装成 ErrorRecord 抛 NativeCommandError（PS 5.1 经典坑，与
+    # Test-JdkVersion 同因）。-NoProfile/-NonInteractive 保证输出干净。
+    if ([string]::IsNullOrWhiteSpace($PwshExe)) { return -1 }
+
+    $output = (cmd /c "`"$PwshExe`" -NoProfile -NonInteractive -Command `"`$PSVersionTable.PSVersion.Major`" 2>&1") | Out-String
+    $text = $output.Trim()
+    $major = 0
+    if ([int]::TryParse($text, [ref]$major)) { return $major }
+    return -1
 }
 
 function Test-JdkVersion {

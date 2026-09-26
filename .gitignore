@@ -158,6 +158,7 @@ logs/
 .zcode/
 .opencode/
 .mimocode/
+.workbuddy/
 
 ### Agent 方案稿（本地规划产物，不入库）
 .agents/plan/
