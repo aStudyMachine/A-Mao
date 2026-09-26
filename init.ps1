@@ -451,8 +451,14 @@ try {
     $currentStage = '中间件就绪'
     $mwStatus = '未选中'
     $wslRepoRoot = Get-WslPath $Root
+    # 端口配置自洽性（结构判据，不需要 WSL/容器）：先拦配置错误，再谈运行时。
+    $mwPortIssue = Get-MiddlewarePortConfigIssue
+    $effectivePorts = Get-MiddlewareEffectivePorts
     if ((-not $script:ReadOnly) -and (-not (Test-StageSelected 'Middleware'))) {
         Write-Host "  [middleware] 未选中（-Stage 未含 Middleware）：跳过" -ForegroundColor DarkYellow
+    } elseif ($mwPortIssue -ne '') {
+        [void](Add-ReportedIssue -Label '中间件端口配置' -Message $mwPortIssue)
+        $mwStatus = '不可判定'
     } elseif ($wslRepoRoot -eq '') {
         [void](Add-ReportedIssue -Label '中间件' -Message "无法把仓库路径映射到 WSL：$Root。本脚本仅支持盘符路径（如 D:\dev\A-Mao）；若仓库位于 WSL 文件系统内，请在 WSL 中直接执行 docker compose up -d。")
         $mwStatus = '不可判定'
@@ -472,11 +478,16 @@ try {
                 [void](Add-ReportedIssue -Label '中间件宿主可达性' -Message "容器 healthy 但宿主不可达：$detail。`n  成因：WSL2 localhost 转发需 Windows 侧绑定该端口，WinNAT/Hyper-V 动态保留区间会吞掉端口（踩坑 通-17；区间随重启变化）。`n  自查：netsh interface ipv4 show excludedportrange protocol=tcp`n  处置：把被吞端口改到区间外，并三处同步——docker\docker-compose.yml 的 ports、对应 boot 模块的 application.yaml、docs\开发环境搭建.md")
                 $mwStatus = '体检（宿主不可达）'
             } else {
-                Write-Host "       [通过] 中间件宿主可达性：$(($script:MwContainers -join '、')) 全部可达" -ForegroundColor DarkGray
+                Write-Host "       [通过] 中间件宿主可达性：MySQL=$($effectivePorts['MYSQL_HOST_PORT']) / Redis=$($effectivePorts['REDIS_HOST_PORT']) / Nacos=$($effectivePorts['NACOS_HTTP_PORT']) / gRPC=$($effectivePorts['NACOS_GRPC_PORT']) 全部可达" -ForegroundColor DarkGray
                 $mwStatus = '体检'
             }
         } else {
-            Write-Host "  [middleware] 启动中间件（wsl docker compose up -d）..." -ForegroundColor DarkGray
+            # 生成 docker\.env（compose 在项目目录自动加载）：让 compose、判据与 Spring
+            # 三方拿到同一组显式端口值，消掉"compose 的 ${VAR:-默认}"这条第二来源。
+            # 必须是 LF 行尾（Linux 侧 compose 读它），故不用 Set-Content（踩坑 通-13 同源）。
+            [System.IO.File]::WriteAllText((Join-Path $Root "docker\.env"), (New-MiddlewareComposeEnvContent), [System.Text.UTF8Encoding]::new($false))
+            Write-Host "  [middleware] 已生成 docker\.env（MySQL=$($effectivePorts['MYSQL_HOST_PORT']) / Redis=$($effectivePorts['REDIS_HOST_PORT']) / Nacos=$($effectivePorts['NACOS_HTTP_PORT']) gRPC=$($effectivePorts['NACOS_GRPC_PORT'])）" -ForegroundColor DarkGray
+            Write-Host "  [middleware] 启动中间件（wsl docker compose up -d；端口有变会重建容器）..." -ForegroundColor DarkGray
             $up = Invoke-WslBash -BashCommand "cd $(ConvertTo-BashSingleQuoted "$wslRepoRoot/docker") && docker compose up -d"
             if ($up.ExitCode -ne 0) {
                 throw "中间件启动失败（退出码 $($up.ExitCode)）。`n$($up.Output)`n  排查：wsl -e bash -c `"cd '$wslRepoRoot/docker' && docker compose logs --tail 50`""
@@ -495,7 +506,7 @@ try {
                 throw "中间件容器 healthy 但**宿主不可达**：$detail。`n  成因：WSL2 localhost 转发需 Windows 侧绑定该端口，WinNAT/Hyper-V 动态保留区间会吞掉端口（踩坑 通-9）。`n  自查：netsh interface ipv4 show excludedportrange protocol=tcp（核对目标端口是否落在区间内）`n  处置：把被吞的宿主端口改到区间外，并**三处同步**——docker\docker-compose.yml 的 ports 映射、对应 boot 模块的 application.yaml、docs\开发环境搭建.md；改完重跑本脚本。"
             }
             $mwStatus = '就绪'
-            Write-Host "       中间件就绪（容器 healthy + 宿主可达）：$(Format-MiddlewareStatus (Get-MiddlewareHealth))" -ForegroundColor DarkGray
+            Write-Host "       中间件就绪（容器 healthy + 宿主可达）：$(Format-MiddlewareStatus (Get-MiddlewareHealth))；端口 MySQL=$($effectivePorts['MYSQL_HOST_PORT']) / Redis=$($effectivePorts['REDIS_HOST_PORT']) / Nacos=$($effectivePorts['NACOS_HTTP_PORT'])" -ForegroundColor DarkGray
         }
     }
 

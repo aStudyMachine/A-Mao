@@ -236,10 +236,23 @@ try {
     if ($SkipMiddlewareCheck) {
         Write-Host "==> 中间件校验：已按 -SkipMiddlewareCheck 跳过" -ForegroundColor DarkYellow
     } else {
-        $unreachable = Get-UnreachableMiddleware
-        if ($unreachable.Count -gt 0) {
+        # 先拦"端口配置不自洽"（结构问题，与容器状态无关），再谈可达性——
+        # 避免在配置本身有误时去探测，报出误导性的"不可达"。
+        $portIssue = Get-MiddlewarePortConfigIssue
+        $effectivePorts = Get-MiddlewareEffectivePorts
+        $unreachable = @()
+        if ($portIssue -eq '') { $unreachable = Get-UnreachableMiddleware }
+        if ($portIssue -ne '') {
+            $msg = "中间件端口配置有误：$portIssue"
+            if ($Check) {
+                Write-Host "==> （体检）$msg" -ForegroundColor Yellow
+            } else {
+                throw $msg
+            }
+        } elseif ($unreachable.Count -gt 0) {
             $detail = ($unreachable | ForEach-Object { "$($_.Name)(端口 $($_.Port))" }) -join "、"
-            $repair = "中间件不可达：$detail（均探测 127.0.0.1）。`n  本项目中间件运行在 WSL2 内，宿主端口：MySQL=13306 / Redis=6379 / Nacos=18848（gRPC=19848）。`n  修复：`n    1) wsl -u root service docker start`n    2) .\init.ps1    # 自动 docker compose up -d 并等待 healthy，完成后再执行本命令`n  确需在无中间件时启动（例如只验证启动链路）：加 -SkipMiddlewareCheck"
+            $portLine = "MySQL=$($effectivePorts['MYSQL_HOST_PORT']) / Redis=$($effectivePorts['REDIS_HOST_PORT']) / Nacos=$($effectivePorts['NACOS_HTTP_PORT'])（gRPC=$($effectivePorts['NACOS_GRPC_PORT'])）"
+            $repair = "中间件不可达：$detail（均探测 127.0.0.1）。`n  当前生效的宿主端口：$portLine（本机私有，可用项目根 .env 覆盖，见踩坑 通-17）。`n  修复：`n    1) wsl -u root service docker start`n    2) .\init.ps1 -Stage Middleware    # 生成 docker\.env 并 docker compose up -d（端口有变会重建容器）`n  确需在无中间件时启动（例如只验证启动链路）：加 -SkipMiddlewareCheck"
             if ($Check) {
                 Write-Host "==> （体检）$repair" -ForegroundColor Yellow
             } else {
