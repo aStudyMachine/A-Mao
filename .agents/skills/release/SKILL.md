@@ -5,7 +5,17 @@ description: 发布流程技能。版本发布收尾时使用：按固定顺序�
 
 # 发布流程
 
-固定顺序：**代码调整 → 源码验证（`mvn test` 全绿）→ 用户验收 → 统一更新所有相关文档（含「最后更新 + 当前源码版本号」标记）→ Git Commit（作者批准）→ 打包/部署（可选，用户不明说则不做）**。
+固定顺序：**代码调整 → 源码验证（`mvn test` 全绿）→ 用户验收 → 统一更新所有相关文档（含「最后更新 + 当前源码版本号」标记）→ Git Commit（作者批准，落 `dev`）→ 发布合并 `dev` → `master`（作者批准）→ 打包/部署（可选，用户不明说则不做）**。
+
+## 分支收口（发布上线）
+
+日常提交一律落 `dev`；上线是 `dev` → `master` 的发布合并，逐项执行：
+
+1. `git log --oneline master..dev` 核对待上线提交恰为本次发布范围。
+2. 作者批准后：`git switch master && git pull` → `git merge --no-ff dev`。
+3. 推送 `master` 另需批准（`git push origin master`）；若 `master` 出现独立提交，必须回流 `dev`（`git switch dev && git merge master`）。
+
+细则见 `docs/开发规范.md` §7.3。
 
 ## 版本标记同步清单
 
@@ -28,4 +38,4 @@ description: 发布流程技能。版本发布收尾时使用：按固定顺序�
 
 ## Git 写操作授权红线
 
-commit / push / merge / 删除分支，非作者本人明确批准一律禁止；**每次 commit 须单独批准**，批准一次 ≠ 批准后续；用户触发本技能视为对该次发布 commit/push 的批准（技能内仍逐项校验：展示 `git status`/`git diff` 摘要与拟好的完整 commit message，获作者确认后执行）。细则见 `docs/开发规范.md` §7。
+commit / push / merge / 删除分支，非作者本人明确批准一律禁止；**每次 commit 须单独批准（含 `dev` 上的提交；直落 `dev` 不构成预授权）**，批准一次 ≠ 批准后续；用户触发本技能视为对该次发布 commit/push 的批准（技能内仍逐项校验：展示 `git status`/`git diff` 摘要与拟好的完整 commit message，获作者确认后执行）。细则见 `docs/开发规范.md` §7。

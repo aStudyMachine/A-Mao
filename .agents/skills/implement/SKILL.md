@@ -12,7 +12,7 @@ description: 实施已确认的 spec、计划或 ticket。当用户要求实现�
 - 目标来自用户明确请求、已批准的 `.agents/plan/`、`.scratch/<feature>/spec.md` 或具体 ticket。
 - 目标、范围、验收标准或关键依赖仍有分歧时，先转入 `grilling` 或 `grill-with-docs`，不要带着假设编码。
 - 开始前通读 `AGENTS.md`，再按 `project-conventions` 路由读取相关架构、开发、模块、配置和接口文档。
-- 如果当前在 `main`，按项目分支规范创建工作分支；不能在 `main` 直接实施。
+- 分支先行：按 `docs/开发规范.md` §7.1 判据表判定落点——小改动直落 `dev`，大改动从 `dev` 开工作分支（判定不确定时一律开分支）；禁止在 `master` 上直接实施。
 
 ## 实施流程
 

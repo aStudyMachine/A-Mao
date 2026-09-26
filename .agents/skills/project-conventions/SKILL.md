@@ -34,4 +34,5 @@ description: 项目开发规范路由技能。在本项目中执行代码修改�
 ## 沉淀与发布
 
 - 经验沉淀流程走 knowledge-distill 技能；发布流程走 release 技能。
+- 默认开发分支为 `dev`：小改动直落 `dev`、大改动从 `dev` 开工作分支；`master` 只接收 `dev` 的发布合并（判据见 `docs/开发规范.md` §7.1）。
 - Git 写操作（commit/push/merge/删分支）每次须项目作者单独批准，见 `docs/开发规范.md` §7.1。
