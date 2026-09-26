@@ -48,3 +48,15 @@ _Avoid_: client 模块、facade 模块（本项目不用 RPC client 语义；api
 **traceId**:
 链路追踪标识，由 `amao-common-tracelog` 经 SLF4J MDC 注入日志上下文，并随写库操作落 `trace_id` 字段。所有后台任务及公共层日志必须携带（开发规范 §2）。
 _Avoid_: 请求 ID（那是入参/接口标识，不参与跨方法链路串联）
+
+### 宿主端口（host port）
+
+**host port**:
+`docker/docker-compose.yml` 的 `ports` 映射中**冒号左侧**的端口，即运行在宿主上的应用实际连接的端口（如 Redis `16379`）；冒号右侧是**容器内端口**（如 `6379`），仅容器网络内可见，healthcheck 与 `docker exec` 用的是它。判定：应用配置（`spring.data.redis.port`、JDBC URL、`server-addr`）里写的一律是宿主端口。
+_Avoid_: 端口、Redis 端口、MySQL 端口（不区分两侧——容器 `healthy` 只证明容器内侧正常，宿主侧可能被 WinNAT 保留区间吞掉，见踩坑 通-17）
+
+### 判据 / 动作（judgement / action）
+
+**judgement / action**:
+入口脚本中的两类函数：**判据**只读、命名 `Test-*` / `Get-*`，可在只读体检中单独调用，且同一判据只允许一处实现（放 `scripts/local-env.ps1` 或所在脚本）；**动作**有副作用、命名 `Invoke-*`。调用方（人或 Agent）先取判据结论再决定是否动作（关键动作前置校验，架构规范 §4.7）。
+_Avoid_: 检查、校验（不区分是否含副作用，会导致"以为在体检、实际在写盘"）
