@@ -206,3 +206,44 @@ function Test-JdkVersion {
     $versionOutput = (cmd /c "`"$JavaExe`" -version 2>&1") | Out-String
     return ($versionOutput -match ('version "?' + [regex]::Escape($ExpectedVersion) + '\b'))
 }
+
+function Get-MiddlewareProbePorts {
+    # 开发中间件的**宿主**端口清单（端口值的唯一权威是 docker\docker-compose.yml）。
+    # 改端口须同步三处：compose 映射 + 对应 boot 模块的 application.yaml +
+    # docs\开发环境搭建.md。gRPC 端口单列：踩坑 通-9 的形态是"Nacos HTTP 通而
+    # gRPC 不通"，此时应用注册会以 ErrCode:-401 失败。
+    return @(
+        @{ Name = "MySQL";      Port = 13306 },
+        @{ Name = "Redis";      Port = 6379  },
+        @{ Name = "Nacos HTTP"; Port = 18848 },
+        @{ Name = "Nacos gRPC"; Port = 19848 }
+    )
+}
+
+function Test-TcpPort {
+    param([int]$Port, [string]$TargetHost = "127.0.0.1", [int]$TimeoutMs = 1500)
+
+    # 有界探测：连接被拒/超时统一返回 $false（不透出异常，由调用方汇总报道）。
+    # 为什么需要它：**容器 healthy ≠ 宿主可达**。WSL2 的 localhost 转发依赖
+    # Windows 侧能绑定该端口，而 WinNAT/Hyper-V 动态保留区间会静默吞掉端口
+    # （踩坑 通-9），于是"容器健康"与"应用连得上"相互分离——就绪判据不能只看
+    # 表面状态（开发规范 §1 环境纪律同源）。
+    $client = New-Object System.Net.Sockets.TcpClient
+    try {
+        $task = $client.ConnectAsync($TargetHost, $Port)
+        if (-not $task.Wait($TimeoutMs)) { return $false }
+        return $client.Connected
+    } catch {
+        return $false
+    } finally {
+        $client.Dispose()
+    }
+}
+
+function Get-UnreachableMiddleware {
+    param([object[]]$ProbePorts)
+
+    # 返回不可达项数组（每项含 Name/Port）；空数组表示全部可达。
+    if (-not $ProbePorts) { $ProbePorts = Get-MiddlewareProbePorts }
+    return @($ProbePorts | Where-Object { -not (Test-TcpPort -Port $_.Port) })
+}

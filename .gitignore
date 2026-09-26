@@ -169,3 +169,6 @@ TOOLS.md
 USER.md
 IDENTITY.md
 
+### 异常现场落盘（开发规范 §2：只落在异常路径，属本机诊断产物，永不入库）
+diagnostics/
+
