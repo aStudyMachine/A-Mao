@@ -158,6 +158,10 @@ try {
     exit 0
 }
 catch {
+    # catch 内必须先降 ErrorActionPreference：EAP=Stop 下 Write-Error 自身即终止性
+    # 错误，其后的 Pause-IfInteractive 永远不执行——失败时窗口直接关掉，用户看不到
+    # 报错内容。同因见踩坑记录 通-16。
+    $ErrorActionPreference = 'Continue'
     Write-Error $_
     Pause-IfInteractive
     exit 1

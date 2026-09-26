@@ -84,6 +84,10 @@ function Import-LocalDevEnv {
         MavenSettings  = ''
         MavenHome      = ''
         MvnwRepoUrl    = ''
+        MysqlHostPort  = ''
+        RedisHostPort  = ''
+        NacosHttpPort  = ''
+        NacosGrpcPort  = ''
         Values         = @{}
     }
 
@@ -100,6 +104,10 @@ function Import-LocalDevEnv {
     $result.MavenSettings = [string]$map["MAVEN_SETTINGS"]
     $result.MavenHome = [string]$map["MAVEN_HOME"]
     $result.MvnwRepoUrl = [string]$map["MVNW_REPOURL"]
+    $result.MysqlHostPort = [string]$map["MYSQL_HOST_PORT"]
+    $result.RedisHostPort = [string]$map["REDIS_HOST_PORT"]
+    $result.NacosHttpPort = [string]$map["NACOS_HTTP_PORT"]
+    $result.NacosGrpcPort = [string]$map["NACOS_GRPC_PORT"]
 
     # JDK：注入 JAVA_HOME（mvnw.cmd 内部靠它定位 java）并把 bin 前置进 PATH
     # （工具链候选与 IDE 外的手工 mvn 调用都受益）。
@@ -111,6 +119,15 @@ function Import-LocalDevEnv {
     if ($result.MavenUserHome -ne '') { $env:MAVEN_USER_HOME = $result.MavenUserHome }
     if ($result.MavenHome -ne '') { $env:MAVEN_HOME = $result.MavenHome }
     if ($result.MvnwRepoUrl -ne '') { $env:MVNW_REPOURL = $result.MvnwRepoUrl }
+
+    # 中间件宿主端口：同样是**本机私有事实**——哪几个端口在本机可用取决于
+    # WinNAT/Hyper-V 动态保留区间（踩坑 通-17），各设备不同，故允许 .env 覆盖。
+    # 留空即不注入，运行时落回 compose / application.yaml 里的默认值。
+    # Spring 侧以 ${VAR:默认值} 占位符消费同名环境变量。
+    if ($result.MysqlHostPort -ne '') { $env:MYSQL_HOST_PORT = $result.MysqlHostPort }
+    if ($result.RedisHostPort -ne '') { $env:REDIS_HOST_PORT = $result.RedisHostPort }
+    if ($result.NacosHttpPort -ne '') { $env:NACOS_HTTP_PORT = $result.NacosHttpPort }
+    if ($result.NacosGrpcPort -ne '') { $env:NACOS_GRPC_PORT = $result.NacosGrpcPort }
 
     return $result
 }
@@ -205,4 +222,125 @@ function Test-JdkVersion {
 
     $versionOutput = (cmd /c "`"$JavaExe`" -version 2>&1") | Out-String
     return ($versionOutput -match ('version "?' + [regex]::Escape($ExpectedVersion) + '\b'))
+}
+
+function Get-MiddlewareDefaultPorts {
+    # 宿主端口**默认值**的权威定义点。docker\docker-compose.yml 的 `${VAR:-默认}`
+    # 与两个 application.yaml 的同名占位符默认值必须与本表一致（改默认值须同轮
+    # 改这三处；不一致会被结构判据当场发现，见 Get-MiddlewarePortConfigIssue）。
+    #
+    # 为什么允许 .env 覆盖：端口可用性取决于本机 WinNAT/Hyper-V **动态**保留区间
+    # （踩坑 通-17/通-9），每台设备不同——属机器私有事实，不该硬编码进仓库。
+    return [ordered]@{
+        MYSQL_HOST_PORT = 13306
+        REDIS_HOST_PORT = 16379   # 6379 曾被本机保留区间 6290-6389 吞掉（通-17）
+        NACOS_HTTP_PORT = 18848
+        NACOS_GRPC_PORT = 19848   # 不变式：= NACOS_HTTP_PORT + 1000（nacos-client 规则）
+    }
+}
+
+function Get-MiddlewareEffectivePorts {
+    # 有效端口 = .env 覆盖值（Import-LocalDevEnv 已注入为同名环境变量）或默认值。
+    $ports = Get-MiddlewareDefaultPorts
+    foreach ($key in @($ports.Keys)) {
+        $envValue = [System.Environment]::GetEnvironmentVariable($key)
+        if (-not [string]::IsNullOrWhiteSpace($envValue)) { $ports[$key] = $envValue }
+    }
+    return $ports
+}
+
+function Get-MiddlewarePortConfigIssue {
+    # 返回空串 = 端口配置自洽；否则返回一句话问题（含处置），供调用方直接报出。
+    # 这是**结构判据**：只看配置本身是否自洽，不依赖运行时（无需容器在跑）。
+    $ports = Get-MiddlewareEffectivePorts
+    $keys = @('MYSQL_HOST_PORT', 'REDIS_HOST_PORT', 'NACOS_HTTP_PORT', 'NACOS_GRPC_PORT')
+    $issues = @()
+    foreach ($key in $keys) {
+        $value = "$($ports[$key])"
+        if ($value -notmatch '^\d+$') {
+            $issues += "$key=$value 不是合法端口（应为 1-65535 的整数）"
+        } elseif ([int]$value -lt 1 -or [int]$value -gt 65535) {
+            $issues += "$key=$value 超出端口范围 1-65535"
+        }
+    }
+    if ($issues.Count -eq 0) {
+        # nacos-client 以「server-addr 端口 + 1000」连 gRPC，两个端口必须成对；
+        # 错配时**端口探测会通过而应用注册失败**（ErrCode:-401，踩坑 通-9），
+        # 属"探测绿、实际坏"的假阴性，必须在此拦掉。
+        if ([int]$ports['NACOS_GRPC_PORT'] -ne ([int]$ports['NACOS_HTTP_PORT'] + 1000)) {
+            $issues += "NACOS_GRPC_PORT($($ports['NACOS_GRPC_PORT'])) 必须等于 NACOS_HTTP_PORT($($ports['NACOS_HTTP_PORT'])) + 1000（nacos-client 规则，踩坑 通-9）"
+        }
+    }
+    if ($issues.Count -gt 0) {
+        return ($issues -join '；') + "。请在项目根 .env 修正（或删除对应键以落回默认值）后重跑。"
+    }
+    return ''
+}
+
+function Get-MiddlewareProbePorts {
+    # 探测清单（名称 → 有效端口）。gRPC 单列：踩坑 通-9 的形态是"Nacos HTTP 通而
+    # gRPC 不通"，此时应用注册会以 ErrCode:-401 失败。
+    # 非法值回退默认值：结构问题由 Get-MiddlewarePortConfigIssue 明确报出，
+    # 此处不让它把探测过程本身炸掉（否则只剩笼统异常）。
+    $ports = Get-MiddlewareEffectivePorts
+    $defaults = Get-MiddlewareDefaultPorts
+    $toInt = {
+        param($raw, $fallback)
+        $n = 0
+        if ([int]::TryParse("$raw", [ref]$n)) { return $n }
+        return [int]$fallback
+    }
+    return @(
+        @{ Name = "MySQL";      Port = (& $toInt $ports['MYSQL_HOST_PORT'] $defaults['MYSQL_HOST_PORT']) },
+        @{ Name = "Redis";      Port = (& $toInt $ports['REDIS_HOST_PORT'] $defaults['REDIS_HOST_PORT']) },
+        @{ Name = "Nacos HTTP"; Port = (& $toInt $ports['NACOS_HTTP_PORT'] $defaults['NACOS_HTTP_PORT']) },
+        @{ Name = "Nacos gRPC"; Port = (& $toInt $ports['NACOS_GRPC_PORT'] $defaults['NACOS_GRPC_PORT']) }
+    )
+}
+
+function New-MiddlewareComposeEnvContent {
+    # 生成 docker\.env（compose 在项目目录自动加载它）——目的是消掉"compose 的
+    # ${VAR:-默认} 与项目根 .env 双源"：正常路径下 compose 拿到的是**显式值**，
+    # 与判据、与 Spring 三方同源。
+    # 行尾必须 LF：这是给 Linux 侧 compose 读的文件。
+    $ports = Get-MiddlewareEffectivePorts
+    $lines = @(
+        '# 由 init.ps1 自项目根 .env 生成（本机私有事实，勿手工维护、不入库）',
+        '# 端口默认值定义处：scripts\local-env.ps1::Get-MiddlewareDefaultPorts',
+        '# 覆盖方式：改项目根 .env 的 MYSQL_HOST_PORT / REDIS_HOST_PORT / NACOS_HTTP_PORT / NACOS_GRPC_PORT',
+        "MYSQL_HOST_PORT=$($ports['MYSQL_HOST_PORT'])",
+        "REDIS_HOST_PORT=$($ports['REDIS_HOST_PORT'])",
+        "NACOS_HTTP_PORT=$($ports['NACOS_HTTP_PORT'])",
+        "NACOS_GRPC_PORT=$($ports['NACOS_GRPC_PORT'])",
+        ''
+    )
+    return ($lines -join "`n")
+}
+
+function Test-TcpPort {
+    param([int]$Port, [string]$TargetHost = "127.0.0.1", [int]$TimeoutMs = 1500)
+
+    # 有界探测：连接被拒/超时统一返回 $false（不透出异常，由调用方汇总报道）。
+    # 为什么需要它：**容器 healthy ≠ 宿主可达**。WSL2 的 localhost 转发依赖
+    # Windows 侧能绑定该端口，而 WinNAT/Hyper-V 动态保留区间会静默吞掉端口
+    # （踩坑 通-9），于是"容器健康"与"应用连得上"相互分离——就绪判据不能只看
+    # 表面状态（开发规范 §1 环境纪律同源）。
+    $client = New-Object System.Net.Sockets.TcpClient
+    try {
+        $task = $client.ConnectAsync($TargetHost, $Port)
+        if (-not $task.Wait($TimeoutMs)) { return $false }
+        return $client.Connected
+    } catch {
+        return $false
+    } finally {
+        $client.Dispose()
+    }
+}
+
+function Get-UnreachableMiddleware {
+    param([object[]]$ProbePorts)
+
+    # 返回不可达项数组（每项含 Name/Port）；空数组表示全部可达。
+    if (-not $ProbePorts) { $ProbePorts = Get-MiddlewareProbePorts }
+    return @($ProbePorts | Where-Object { -not (Test-TcpPort -Port $_.Port) })
 }

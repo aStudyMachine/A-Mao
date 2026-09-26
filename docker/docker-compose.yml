@@ -1,12 +1,23 @@
 # A-Mao 开发中间件（在 WSL 中启动：docker compose up -d）
 # 端口/账号与各模块 application.yaml 保持一致，业务代码无需任何改动
+#
+# ===== 宿主端口的三条约定（改端口前必读）=====
+# 1. 宿主端口可经项目根 .env 覆盖（MYSQL_HOST_PORT / REDIS_HOST_PORT /
+#    NACOS_HTTP_PORT / NACOS_GRPC_PORT）。原因：端口在本机是否可用取决于
+#    WinNAT/Hyper-V **动态**保留区间（踩坑 通-17/通-9），各设备不同，属机器
+#    私有事实，不该硬编码进仓库。
+# 2. 正常路径由 init.ps1 自项目根 .env 生成 docker/.env（本机私有，不入库），
+#    compose 自动加载它；下面的 ${VAR:-默认} 默认值只作兜底（如手工直接 up）。
+#    默认值定义点：scripts/local-env.ps1::Get-MiddlewareDefaultPorts。
+# 3. 改宿主端口后必须 `docker compose up -d` 让容器**重建**（禁用 start/restart，
+#    否则复用旧 HostConfig 仍绑旧端口，踩坑 通-7）。
 services:
   mysql:
     image: mysql:8.0
     container_name: amao-mysql
     restart: unless-stopped
     ports:
-      - "13306:3306"
+      - "${MYSQL_HOST_PORT:-13306}:3306"
     environment:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_DATABASE: a-mao
@@ -31,7 +42,7 @@ services:
     container_name: amao-redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "${REDIS_HOST_PORT:-16379}:6379"
     command:
       - --appendonly
       - "yes"
@@ -62,8 +73,10 @@ services:
       NACOS_AUTH_IDENTITY_KEY: nacos
       NACOS_AUTH_IDENTITY_VALUE: nacos
     ports:
-      - "18848:8848"
-      - "19848:9848"
+      # 不变式：NACOS_GRPC_PORT = NACOS_HTTP_PORT + 1000（nacos-client 以
+      # server-addr 端口 + 1000 连 gRPC）；错配会被 Get-MiddlewarePortConfigIssue 拦下。
+      - "${NACOS_HTTP_PORT:-18848}:8848"
+      - "${NACOS_GRPC_PORT:-19848}:9848"
       - "8080:8080"
     volumes:
       - nacos-data:/home/nacos/data

@@ -7,7 +7,11 @@
 #
 # 用法：
 #   .\.agents\setup_skills.ps1            # 创建缺失的 junction（幂等，可重复执行）
+#   .\.agents\setup_skills.ps1 -Check     # 只读体检：逐项报告状态，不做任何改动
 #   .\.agents\setup_skills.ps1 -Remove    # 拆除本脚本创建的全部 junction
+#
+# -Check 的存在意义：桥接状态的**判据只有这一处实现**，调用方（如 init.ps1 的
+# 只读体检）应委托本脚本判定，不得另写一套等价检查（架构规范 §4.1）。
 #
 # 说明：
 #   - 原生识别 .agents/skills/ 的 Agent（Codex / Copilot / Gemini CLI
@@ -17,7 +21,8 @@
 #   - $Targets 列表按团队实际使用的 Agent 增删。
 # =====================================================================
 param(
-    [switch]$Remove
+    [switch]$Remove,
+    [switch]$Check
 )
 
 $ErrorActionPreference = "Stop"
@@ -76,9 +81,13 @@ if (-not (Test-Path -LiteralPath $Source)) {
 }
 
 Write-Host "==> 技能源：$Source" -ForegroundColor Cyan
-Write-Host "==> 开始桥接各 Agent skills 目录..." -ForegroundColor Cyan
+if ($Check) {
+    Write-Host "==> 只读体检（-Check）：只报告各目标状态，不做任何改动" -ForegroundColor Cyan
+} else {
+    Write-Host "==> 开始桥接各 Agent skills 目录..." -ForegroundColor Cyan
+}
 
-$created = 0; $skipped = 0; $conflict = 0
+$created = 0; $skipped = 0; $conflict = 0; $missing = 0
 
 foreach ($rel in $Targets) {
     $path = Join-Path $Root $rel
@@ -97,19 +106,28 @@ foreach ($rel in $Targets) {
         $conflict++
     }
     else {
-        # 确保父目录存在
-        $parent = Split-Path $path -Parent
-        if (-not (Test-Path -LiteralPath $parent)) {
-            New-Item -ItemType Directory -Path $parent | Out-Null
+        if ($Check) {
+            Write-Host "  [缺失]   $rel （尚未创建；-Check 模式不做改动）" -ForegroundColor Yellow
+            $missing++
+        } else {
+            # 确保父目录存在
+            $parent = Split-Path $path -Parent
+            if (-not (Test-Path -LiteralPath $parent)) {
+                New-Item -ItemType Directory -Path $parent | Out-Null
+            }
+            New-Item -ItemType Junction -Path $path -Value $Source | Out-Null
+            Write-Host "  [已创建] $rel -> .agents\skills" -ForegroundColor Green
+            $created++
         }
-        New-Item -ItemType Junction -Path $path -Value $Source | Out-Null
-        Write-Host "  [已创建] $rel -> .agents\skills" -ForegroundColor Green
-        $created++
     }
 }
 
 Write-Host ""
-Write-Host "==> 完成：新建 $created 个，已存在 $skipped 个，冲突 $conflict 个。" -ForegroundColor Green
+if ($Check) {
+    Write-Host "==> 体检完成：已存在 $skipped 个，缺失 $missing 个，冲突 $conflict 个（未做任何改动）。" -ForegroundColor Green
+} else {
+    Write-Host "==> 完成：新建 $created 个，已存在 $skipped 个，冲突 $conflict 个。" -ForegroundColor Green
+}
 if ($conflict -gt 0) {
     Write-Host "    存在冲突项，请根据上方日志人工确认。" -ForegroundColor Yellow
     exit 2

@@ -38,18 +38,25 @@
 #   3. 重建统一走清空重建，禁止增量修补（修补出的环境带病运行）。
 #      Maven 后端例外：依赖收敛在用户本地仓库，就绪重建走
 #      mvn -U dependency:resolve，无需清空重建。
+#   4. 中间件可达性前移到起 run 之前：中间件运行在 WSL2 内，WSL 重启后
+#      docker daemon 常忘启动；若等到 Spring 启动期才失败，报错会来自
+#      JDBC/Redisson/Nacos 客户端，且 Nacos 走 optional 配置导入——
+#      可能出现"启动成功却没注册"的假阳性。前置校验把失败固定在
+#      「中间件不可达」这一个结论上，并直接给出修复命令。
 #
 # 用法：
 #   .\dev.ps1 -Module amao-boot/amao-boot-user-service                # 环境检查 + 启动该模块
 #   .\dev.ps1 -Module amao-boot/amao-boot-user-service -Check         # 仅做环境检查，不启动
 #   .\dev.ps1 -Module amao-boot/amao-boot-user-service -Unit backend  # 只启动指定单元（可多个：-Unit a,b）
+#   .\dev.ps1 -Module amao-boot/amao-boot-user-service -SkipMiddlewareCheck  # 跳中间件可达性校验
 #
 #   -Module 必填：不传即报错并列出可用模块（本脚本不做任何模块的默认假设）。
 # =====================================================================
 param(
     [string]$Module,
     [switch]$Check,
-    [string[]]$Unit
+    [string[]]$Unit,
+    [switch]$SkipMiddlewareCheck
 )
 
 $ErrorActionPreference = "Stop"
@@ -135,6 +142,11 @@ if ($Unit -and $Unit.Count -gt 0) {
     $ActiveUnits = $Units
 }
 
+# ---- 中间件可达性判据 ----
+# 端口清单与探测实现已收编到共享库 scripts\local-env.ps1
+# （Get-MiddlewareProbePorts / Test-TcpPort / Get-UnreachableMiddleware）：
+# init.ps1 与 dev.ps1 必须用同一套判据，两处各写一份必然漂移（架构规范 §4.1）。
+
 function Resolve-Toolchain {
     param([string[]]$Candidates, [string]$ExpectedVersion, [string]$UnitName)
     # 逐候选解析真实工具链，回读版本复核；版本不符或全部失败则明确报错退出。
@@ -218,6 +230,39 @@ try {
         Write-Host "==> 未检测到 .env，回退 PATH 工具链探测；建议先执行 .\init.ps1 生成本机配置。" -ForegroundColor DarkYellow
     }
 
+    # ---- 阶段 0.7：中间件可达性前置校验（先于任何 Maven 动作）----
+    # 失败即停在本阶段：避免拖到 Spring 启动期才报 JDBC/Redisson/Nacos 的错，
+    # 也避免 Nacos optional 配置导入造成的"启动成功却未注册"假阳性。
+    if ($SkipMiddlewareCheck) {
+        Write-Host "==> 中间件校验：已按 -SkipMiddlewareCheck 跳过" -ForegroundColor DarkYellow
+    } else {
+        # 先拦"端口配置不自洽"（结构问题，与容器状态无关），再谈可达性——
+        # 避免在配置本身有误时去探测，报出误导性的"不可达"。
+        $portIssue = Get-MiddlewarePortConfigIssue
+        $effectivePorts = Get-MiddlewareEffectivePorts
+        $unreachable = @()
+        if ($portIssue -eq '') { $unreachable = Get-UnreachableMiddleware }
+        if ($portIssue -ne '') {
+            $msg = "中间件端口配置有误：$portIssue"
+            if ($Check) {
+                Write-Host "==> （体检）$msg" -ForegroundColor Yellow
+            } else {
+                throw $msg
+            }
+        } elseif ($unreachable.Count -gt 0) {
+            $detail = ($unreachable | ForEach-Object { "$($_.Name)(端口 $($_.Port))" }) -join "、"
+            $portLine = "MySQL=$($effectivePorts['MYSQL_HOST_PORT']) / Redis=$($effectivePorts['REDIS_HOST_PORT']) / Nacos=$($effectivePorts['NACOS_HTTP_PORT'])（gRPC=$($effectivePorts['NACOS_GRPC_PORT'])）"
+            $repair = "中间件不可达：$detail（均探测 127.0.0.1）。`n  当前生效的宿主端口：$portLine（本机私有，可用项目根 .env 覆盖，见踩坑 通-17）。`n  修复：`n    1) wsl -u root service docker start`n    2) .\init.ps1 -Stage Middleware    # 生成 docker\.env 并 docker compose up -d（端口有变会重建容器）`n  确需在无中间件时启动（例如只验证启动链路）：加 -SkipMiddlewareCheck"
+            if ($Check) {
+                Write-Host "==> （体检）$repair" -ForegroundColor Yellow
+            } else {
+                throw $repair
+            }
+        } else {
+            Write-Host "==> 中间件可达：$((Get-MiddlewareProbePorts | ForEach-Object { $_.Name }) -join '、')" -ForegroundColor DarkGray
+        }
+    }
+
     # ---- 阶段 1：逐单元解析工具链 + 环境就绪检查/重建 ----
     # 循环变量禁止命名 $unit：与脚本参数 $Unit 同名（PowerShell 变量名大小写
     # 不敏感），会被参数的 [string[]] 类型约束强制转换，取不到哈希表字段。
@@ -273,9 +318,14 @@ try {
     }
 
     Write-Host "==> 全部单元已启动（模块 $Module）。关闭对应调试窗口即停止；PID：$($started.Id -join ', ')" -ForegroundColor Green
+    Write-Host "  端到端校验（双服务都启动后执行）：命令与判据见 docs\开发环境搭建.md §4 第 6 条，或 .\init.ps1 末尾打印的现成命令。" -ForegroundColor DarkGray
     exit 0
 }
 catch {
+    # catch 内必须先降 ErrorActionPreference：EAP=Stop 下 Write-Error 自身即终止性
+    # 错误，其后的 Pause-IfInteractive 永远不执行——失败时窗口直接关掉，用户看不到
+    # 报错内容。同因见踩坑记录 通-16。
+    $ErrorActionPreference = 'Continue'
     Write-Error $_
     Pause-IfInteractive
     exit 1

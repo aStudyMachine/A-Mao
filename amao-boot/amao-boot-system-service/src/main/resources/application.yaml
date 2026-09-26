@@ -18,8 +18,9 @@ spring:
   # ========== Nacos（注册/配置中心；gRPC 端口 = server-addr 端口 + 1000，须与 compose 映射一致） ==========
   cloud:
     nacos:
-      # 宿主端口 18848 避开 Windows Hyper-V 保留区间（见 docker/docker-compose.yml 注释）
-      server-addr: 127.0.0.1:18848
+      # 宿主端口默认 18848 避开 Windows Hyper-V 保留区间；可经 .env 的 NACOS_HTTP_PORT
+      # 覆盖（gRPC 由 nacos-client 自动取其 +1000，须与 NACOS_GRPC_PORT 成对）
+      server-addr: 127.0.0.1:${NACOS_HTTP_PORT:18848}
 
   # ========== 数据源（dynamic-datasource 多数据源） ==========
   datasource:
@@ -31,7 +32,8 @@ spring:
           # 逻辑库名，会拼进 url 占位符
           name: a-mao
           # JDBC 连接串：关闭 SSL、时区上海、允许公钥取回（MySQL 8 鉴权）
-          url: jdbc:mysql://127.0.0.1:13306/${spring.datasource.dynamic.datasource.master.name}?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+          # 宿主端口经 MYSQL_HOST_PORT 覆盖（本机私有事实，见 docker/docker-compose.yml 顶部约定）
+          url: jdbc:mysql://127.0.0.1:${MYSQL_HOST_PORT:13306}/${spring.datasource.dynamic.datasource.master.name}?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
           # MySQL 驱动类
           driver-class-name: com.mysql.cj.jdbc.Driver
           # 数据库账号（本地开发；生产须外置密钥，禁止入库）
@@ -44,8 +46,9 @@ spring:
     redis:
       # Redis 主机
       host: 127.0.0.1
-      # Redis 端口
-      port: 6379
+      # Redis 端口（宿主端口，可经 .env 的 REDIS_HOST_PORT 覆盖；默认 16379——
+      # 原 6379 曾被本机 WinNAT 保留区间 6290-6389 吞掉，踩坑 通-17）
+      port: ${REDIS_HOST_PORT:16379}
       # Redis DB 序号（须与 user-service 相同，才能互认登录会话）
       database: 0
       # 命令/连接超时
